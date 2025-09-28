@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://dbkffirhl453u"]
+
+[ext_resource type="PackedScene" uid="uid://dqu0j5ab0ejex" path="res://FPSController/FPSController.tscn" id="1_op2cj"]
+[ext_resource type="Script" uid="uid://c7j4pjoj52cu4" path="res://fps.gd" id="2_8sdrk"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pbuka"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_f5dhi"]
+sky_material = SubResource("ProceduralSkyMaterial_pbuka")
+
+[sub_resource type="Environment" id="Environment_3hcpy"]
+background_mode = 2
+sky = SubResource("Sky_f5dhi")
+tonemap_mode = 2
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_3hcpy")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+directional_shadow_max_distance = 1.0
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2000027, 0.45000002, 6.550001)
+use_collision = true
+size = Vector3(47.600002, 0.1, 38.7)
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("1_op2cj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.3)
+
+[node name="FPS" type="Label" parent="."]
+offset_right = 133.0
+offset_bottom = 39.0
+script = ExtResource("2_8sdrk")

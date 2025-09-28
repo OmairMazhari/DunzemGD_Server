@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://jakruoxss2oj"]
+
+[node name="ViewCamera" type="ViewCamera"]
+look_sway_factor = 0.25
+move_sway_factor = 0.315
+cull_mask = 4
+fov = 35.0

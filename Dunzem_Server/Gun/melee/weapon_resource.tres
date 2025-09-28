@@ -1,0 +1,8 @@
+[gd_resource type="WeaponResource" format=3 uid="uid://d24l03agse46v"]
+
+[resource]
+gun_damage = 6.13
+view_model_position = Vector3(0.024797082, -0.10085392, -0.70795935)
+view_model_rotation = Vector3(0.105, 0, 0)
+view_model_scale = Vector3(1, 1, 1)
+world_model_scale = Vector3(1, 1, 1)

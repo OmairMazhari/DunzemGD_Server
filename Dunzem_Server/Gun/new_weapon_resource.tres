@@ -1,0 +1,4 @@
+[gd_resource type="WeaponResource" format=3 uid="uid://ch502koxk4eov"]
+
+[resource]
+view_model_position = Vector3(4, 0, 0)

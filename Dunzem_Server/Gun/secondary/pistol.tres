@@ -1,0 +1,11 @@
+[gd_resource type="WeaponResource" load_steps=2 format=3 uid="uid://h8kpbp18qbgm"]
+
+[ext_resource type="PackedScene" uid="uid://bxrfa2wdtln7f" path="res://Gun/green_pistol_view_model.tscn" id="1_pu3cj"]
+
+[resource]
+view_model_container = Object(Node3D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","transform":Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),"rotation_edit_mode":0,"rotation_order":2,"top_level":false,"visible":true,"visibility_parent":NodePath(""),"script":Resource("res://FPSController/view_model_container1.gd"))
+
+view_model_position = Vector3(0.025, -0.101, -0.568)
+view_model_scale = Vector3(1.17, 1.305, 1.185)
+view_model = ExtResource("1_pu3cj")
+world_model_scale = Vector3(1, 1, 1)

@@ -1,0 +1,135 @@
+[gd_scene load_steps=20 format=3 uid="uid://cqewns2aeaaca"]
+
+[ext_resource type="PackedScene" uid="uid://gvm0me264r32" path="res://models/disguise-glasses.glb" id="1_mats3"]
+[ext_resource type="PackedScene" uid="uid://7dm87wp0hyjg" path="res://models/wiggly_hair.tscn" id="2_4khm2"]
+[ext_resource type="PlayerMovementStatsResource" uid="uid://dx1r0x4vo53ln" path="res://FPSController/player_movement_stats_resource.tres" id="3_ibh2a"]
+[ext_resource type="AudioStream" uid="uid://cafuelrry0igx" path="res://audio/pistol-draw-unholster-80799.mp3" id="4_kyvup"]
+[ext_resource type="AudioStream" uid="uid://bwjbcpnmx2d6f" path="res://audio/cc0-276963__gfl7__galil-reload-sound.mp3" id="5_pds63"]
+[ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="6_4hmng"]
+[ext_resource type="AudioStream" uid="uid://cxg235d340pok" path="res://audio/cc0-369781__morganpurkis__silenced-gunshot.wav" id="7_rvr7t"]
+[ext_resource type="PackedScene" uid="uid://btyqjibm1juoa" path="res://proto_pistol.tscn" id="8_w7ckp"]
+[ext_resource type="GunWeaponResource" uid="uid://swum6s0mlpjv" path="res://Gun/new_gun_weapon_resource.tres" id="9_isxbw"]
+[ext_resource type="AudioStream" uid="uid://cchklld8p4183" path="res://audio/cc0-377145__nioczkus__pistol-draw-unholster.wav" id="10_f7e2v"]
+[ext_resource type="AudioStream" uid="uid://ciia5r5sl6puk" path="res://audio/cc0-276959__gfl7__pistol-reload-sound.mp3" id="11_24mgd"]
+[ext_resource type="AudioStream" uid="uid://b1nxny73maex1" path="res://audio/cc0-415912__okieactor__heathers-gunshot-effect2.wav" id="12_tg5ar"]
+[ext_resource type="PackedScene" uid="uid://8oprf1gdg4kw" path="res://proto_pistol2.tscn" id="13_ilaji"]
+[ext_resource type="PackedScene" uid="uid://jakruoxss2oj" path="res://FPSController/view_model.tscn" id="14_ik400"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f6xud"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
+
+[sub_resource type="GunWeaponResource" id="GunWeaponResource_eut07"]
+fire_rate = 100.0
+shoot_anim_name = &"Shoot"
+reload_anim_name = &"Reload"
+shoot_audio = ExtResource("7_rvr7t")
+reload_audio = ExtResource("5_pds63")
+reload_time = 2.0
+reload_ui = ExtResource("6_4hmng")
+view_model_position = Vector3(0.01, 0.095, -0.385)
+view_model_rotation = Vector3(0, 3.1415927, 0)
+view_model_scene = ExtResource("8_w7ckp")
+equip_anim_name = &"Equip"
+equip_audio = ExtResource("4_kyvup")
+
+[sub_resource type="GunWeaponResource" id="GunWeaponResource_o8sh2"]
+is_semi_auto = true
+fire_rate = 300.0
+shoot_anim_name = &"Shoot"
+reload_anim_name = &"Reload1"
+shoot_audio = ExtResource("12_tg5ar")
+reload_audio = ExtResource("11_24mgd")
+gun_damage = 50.0
+reload_time = 2.0
+reserve_ammo = 31
+reload_ui = ExtResource("6_4hmng")
+view_model_position = Vector3(0.045, -0.1, -0.15)
+view_model_rotation = Vector3(0, 3.142, 0)
+view_model_scale = Vector3(0.6, 0.6, 0.6)
+view_model_scene = ExtResource("13_ilaji")
+equip_anim_name = &"Equip"
+unequip_anim_name = &"Unequip"
+equip_audio = ExtResource("10_f7e2v")
+unequip_audio = ExtResource("4_kyvup")
+equip_time = 0.7
+
+[sub_resource type="LabelSettings" id="LabelSettings_1l80g"]
+
+[node name="CharacterBody3D" type="FPSController"]
+lookSensitivity = 0.001
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_f6xud")
+
+[node name="WorldModel" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WorldModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_2veyp")
+
+[node name="disguise-glasses" parent="WorldModel" instance=ExtResource("1_mats3")]
+transform = Transform3D(-2.2, 0, 2.68221e-07, 0, 2.2, 0, -2.68221e-07, 0, -2.2, 0, 1.2, -0.1)
+
+[node name="WigglyHair" parent="WorldModel" instance=ExtResource("2_4khm2")]
+transform = Transform3D(2.58393, 0, 3.97904e-13, 0, 2.13661, 0, -3.97904e-13, 0, 2.58393, 0, 1.82524, 0)
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+visible = false
+cull_mask = 1048569
+current = true
+
+[node name="BulletRayCast" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -9999)
+
+[node name="PlayerMovementFSM" type="PlayerMovementFSM" parent="." node_paths=PackedStringArray("player", "initial_state")]
+player = NodePath("..")
+stats = ExtResource("3_ibh2a")
+initial_state = NodePath("Move_PMState")
+
+[node name="Move_PMState" type="Move_PMState" parent="PlayerMovementFSM" node_paths=PackedStringArray("FSM")]
+FSM = NodePath("..")
+
+[node name="NoClip_PMState" type="NoClip_PMState" parent="PlayerMovementFSM" node_paths=PackedStringArray("FSM")]
+FSM = NodePath("..")
+
+[node name="PlayerWeaponManager" type="PlayerWeaponManager" parent="." node_paths=PackedStringArray("bullet_ray_cast")]
+"Weapon Inventory Slots" = Array[WeaponResource]([SubResource("GunWeaponResource_eut07"), ExtResource("9_isxbw"), SubResource("GunWeaponResource_o8sh2")])
+"Path for automatic wepaon loading" = Array[StringName]([&"res://Gun/primary/", &"res://Gun/secondary/", &"res://Gun/melee/"])
+view_model_container_path = "../SubViewportContainer/SubViewport/ViewCamera"
+bullet_ray_cast = NodePath("../Head/Camera3D/BulletRayCast")
+look_sway_factor = 0.1
+move_sway_factor = 0.1
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer" parent="PlayerWeaponManager"]
+volume_db = -22.4
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="ViewCamera" parent="SubViewportContainer/SubViewport" instance=ExtResource("14_ik400")]
+look_sway_factor = 0.11
+move_sway_factor = 0.16
+visible = false
+
+[node name="Label" type="Label" parent="."]
+offset_left = 946.0
+offset_top = 595.0
+offset_right = 1146.0
+offset_bottom = 644.0
+text = "Testing
+"
+label_settings = SubResource("LabelSettings_1l80g")

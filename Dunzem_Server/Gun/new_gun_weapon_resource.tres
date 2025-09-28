@@ -1,0 +1,26 @@
+[gd_resource type="GunWeaponResource" load_steps=6 format=3 uid="uid://swum6s0mlpjv"]
+
+[ext_resource type="AudioStream" uid="uid://cafuelrry0igx" path="res://audio/pistol-draw-unholster-80799.mp3" id="1_l55wq"]
+[ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="2_6qobj"]
+[ext_resource type="AudioStream" uid="uid://bwjbcpnmx2d6f" path="res://audio/cc0-276963__gfl7__galil-reload-sound.mp3" id="2_d507e"]
+[ext_resource type="AudioStream" uid="uid://vvf4uod7so7f" path="res://audio/cc0-385811__morganpurkis__single-pistol-gunshot-3.wav" id="2_q6cfh"]
+[ext_resource type="PackedScene" uid="uid://darex8rpd8bce" path="res://Sniper_viewmodel.tscn" id="4_q6cfh"]
+
+[resource]
+is_semi_auto = true
+fire_rate = 700.0
+shoot_anim_name = &"Shoot"
+reload_anim_name = &"Reload"
+shoot_audio = ExtResource("2_q6cfh")
+reload_audio = ExtResource("2_d507e")
+gun_damage = 50.0
+reload_time = 4.0
+reload_ui = ExtResource("2_6qobj")
+view_model_position = Vector3(0.695, -0.485, -1.76)
+view_model_rotation = Vector3(0, 2.9757864, 0.02617994)
+view_model_scale = Vector3(0.03, 0.03, 0.03)
+view_model_scene = ExtResource("4_q6cfh")
+equip_anim_name = &"Equip"
+unequip_anim_name = &"Unequip"
+equip_audio = ExtResource("1_l55wq")
+equip_time = 0.4

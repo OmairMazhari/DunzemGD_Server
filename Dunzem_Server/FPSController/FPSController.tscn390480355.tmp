@@ -1,0 +1,78 @@
+[gd_scene load_steps=9 format=3 uid="uid://dqu0j5ab0ejex"]
+
+[ext_resource type="PackedScene" uid="uid://gvm0me264r32" path="res://models/disguise-glasses.glb" id="1_jryqt"]
+[ext_resource type="PackedScene" uid="uid://7dm87wp0hyjg" path="res://models/wiggly_hair.tscn" id="2_vcg3l"]
+[ext_resource type="PlayerMovementStatsResource" uid="uid://dx1r0x4vo53ln" path="res://FPSController/player_movement_stats_resource.tres" id="3_vcg3l"]
+[ext_resource type="WeaponResource" uid="uid://h8kpbp18qbgm" path="res://Gun/secondary/pistol.tres" id="4_oijtd"]
+[ext_resource type="PackedScene" uid="uid://bxrfa2wdtln7f" path="res://FPSController/fps_rig.tscn" id="5_oijtd"]
+[ext_resource type="Script" uid="uid://d1tnul1btua4f" path="res://FPSController/view_model_container1.gd" id="6_48f3b"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f6xud"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
+
+[node name="CharacterBody3D" type="FPSController"]
+lookSensitivity = 0.001
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_f6xud")
+
+[node name="WorldModel" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WorldModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_2veyp")
+
+[node name="disguise-glasses" parent="WorldModel" instance=ExtResource("1_jryqt")]
+transform = Transform3D(-2.2, 0, 2.68221e-07, 0, 2.2, 0, -2.68221e-07, 0, -2.2, 0, 1.2, -0.1)
+
+[node name="WigglyHair" parent="WorldModel" instance=ExtResource("2_vcg3l")]
+transform = Transform3D(2.58393, 0, 3.97904e-13, 0, 2.13661, 0, -3.97904e-13, 0, 2.58393, 0, 1.82524, 0)
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+cull_mask = 1048569
+current = true
+
+[node name="PlayerMovementFSM" type="PlayerMovementFSM" parent="." node_paths=PackedStringArray("player", "initial_state")]
+player = NodePath("..")
+stats = ExtResource("3_vcg3l")
+initial_state = NodePath("Move_PMState")
+
+[node name="Move_PMState" type="Move_PMState" parent="PlayerMovementFSM" node_paths=PackedStringArray("FSM")]
+FSM = NodePath("..")
+
+[node name="NoClip_PMState" type="NoClip_PMState" parent="PlayerMovementFSM" node_paths=PackedStringArray("FSM")]
+FSM = NodePath("..")
+
+[node name="PlayerWeaponManager" type="PlayerWeaponManager" parent="."]
+"Weapon Inventory Slots" = Array[WeaponResource]([ExtResource("4_oijtd"), ExtResource("4_oijtd"), ExtResource("4_oijtd")])
+"Path for automatic wepaon loading" = Array[StringName]([&"res://Gun/primary/", &"res://Gun/secondary/", &"res://Gun/melee/"])
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="ViewCamera" type="ViewCamera" parent="SubViewportContainer/SubViewport"]
+look_sway_factor = 0.1
+move_sway_factor = 0.3
+cull_mask = 4
+fov = 35.0
+
+[node name="fps_rig" parent="SubViewportContainer/SubViewport/ViewCamera" instance=ExtResource("5_oijtd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.024797082, -0.10085392, -0.70795935)
+visible = false
+
+[node name="ViewModelContainer" type="Node3D" parent="SubViewportContainer/SubViewport/ViewCamera"]
+script = ExtResource("6_48f3b")

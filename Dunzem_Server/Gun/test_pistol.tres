@@ -1,0 +1,13 @@
+[gd_resource type="WeaponResource" load_steps=4 format=3 uid="uid://chgdhy3fv1gh5"]
+
+[ext_resource type="AudioStream" uid="uid://cafuelrry0igx" path="res://audio/pistol-draw-unholster-80799.mp3" id="1_uavfu"]
+[ext_resource type="PackedScene" uid="uid://bxrfa2wdtln7f" path="res://Gun/green_pistol_view_model.tscn" id="2_pn7nh"]
+[ext_resource type="PackedScene" uid="uid://jakruoxss2oj" path="res://FPSController/view_model.tscn" id="3_r6tw6"]
+
+[resource]
+view_model_container = ExtResource("3_r6tw6")
+view_model_position = Vector3(0.024797082, -0.10085392, -0.70795935)
+view_model = ExtResource("2_pn7nh")
+equip_anim_name = &"Equip"
+unequip_anim_name = &"Unequip"
+equip_audio = ExtResource("1_uavfu")

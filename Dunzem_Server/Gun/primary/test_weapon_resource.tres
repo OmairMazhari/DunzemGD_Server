@@ -1,0 +1,4 @@
+[gd_resource type="WeaponResource" format=3 uid="uid://ct7hrbwkbgyds"]
+
+[resource]
+gun_damage = 78.0
