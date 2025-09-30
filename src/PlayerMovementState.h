@@ -18,6 +18,8 @@ public:
 
     void _ready() override {
         input = Input::get_singleton();
+        server = get_node<Node>("../../../../Server");
+        // player = get_node<FPSController>("../../FPSController");
     }
 
     void Enter() override {
@@ -29,6 +31,7 @@ protected:
     Ref<PlayerMovementStatsResource> stats;
     FPSController* player = nullptr;
     Input* input = nullptr;
+    Node* server = nullptr;
 
     void initialize_values(){
         if(FSM){

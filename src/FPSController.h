@@ -22,6 +22,10 @@ public:
 	void _process(double delta) override;
 	void _physics_process(double delta) override;
 
+    // Class functions
+    Dictionary get_input_dict() const;
+    void set_input_dict(Dictionary dict);
+
     // Setters and Getters for Exported Variables
     void set_lookSensitivity(float p_lookSensitivity) { lookSensitivity = p_lookSensitivity; }
     float get_lookSensitivity() const { return lookSensitivity; }
@@ -41,4 +45,7 @@ private:
 
     // Exported Variables
     float lookSensitivity = 0.005;
+
+    // Class Variables
+    Dictionary input_dict;
 };

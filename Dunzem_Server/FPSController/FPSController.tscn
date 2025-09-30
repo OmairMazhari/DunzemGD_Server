@@ -20,7 +20,7 @@
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
 
 [sub_resource type="GunWeaponResource" id="GunWeaponResource_eut07"]
-fire_rate = 100.0
+fire_rate = 20.0
 shoot_anim_name = &"Shoot"
 reload_anim_name = &"Reload"
 shoot_audio = ExtResource("9_eut07")
@@ -56,7 +56,7 @@ equip_time = 0.7
 
 [sub_resource type="LabelSettings" id="LabelSettings_1l80g"]
 
-[node name="CharacterBody3D" type="FPSController"]
+[node name="FPSController" type="FPSController"]
 lookSensitivity = 0.001
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

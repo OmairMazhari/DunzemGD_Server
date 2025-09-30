@@ -38,7 +38,9 @@ void NoClip_PMState::Update(double delta) {
 void NoClip_PMState::Exit() {
     player->get_collision_shape()->set_disabled(false);
     stats->set_no_clip_speed_mult(old_no_clip_speed_mult);
-} 
+}
+
+
 
 void NoClip_PMState::_bind_methods() {
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cqewns2aeaaca"]
+[gd_scene load_steps=19 format=3 uid="uid://cqewns2aeaaca"]
 
 [ext_resource type="PackedScene" uid="uid://gvm0me264r32" path="res://models/disguise-glasses.glb" id="1_mats3"]
 [ext_resource type="PackedScene" uid="uid://7dm87wp0hyjg" path="res://models/wiggly_hair.tscn" id="2_4khm2"]
@@ -54,9 +54,7 @@ equip_audio = ExtResource("10_f7e2v")
 unequip_audio = ExtResource("4_kyvup")
 equip_time = 0.7
 
-[sub_resource type="LabelSettings" id="LabelSettings_1l80g"]
-
-[node name="CharacterBody3D" type="FPSController"]
+[node name="FPSController" type="FPSController"]
 lookSensitivity = 0.001
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -81,7 +79,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
 [node name="Camera3D" type="Camera3D" parent="Head"]
 visible = false
 cull_mask = 1048569
-current = true
 
 [node name="BulletRayCast" type="RayCast3D" parent="Head/Camera3D"]
 target_position = Vector3(0, 0, -9999)
@@ -124,12 +121,3 @@ render_target_update_mode = 4
 look_sway_factor = 0.11
 move_sway_factor = 0.16
 visible = false
-
-[node name="Label" type="Label" parent="."]
-offset_left = 946.0
-offset_top = 595.0
-offset_right = 1146.0
-offset_bottom = 644.0
-text = "Testing
-"
-label_settings = SubResource("LabelSettings_1l80g")

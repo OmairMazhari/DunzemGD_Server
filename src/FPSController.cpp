@@ -19,6 +19,9 @@ void FPSController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_lookSensitivity", "p_lookSensitivity"), &FPSController::set_lookSensitivity);
     ClassDB::bind_method(D_METHOD("get_lookSensitivity"), &FPSController::get_lookSensitivity);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "lookSensitivity"), "set_lookSensitivity", "get_lookSensitivity");
+
+    ClassDB::bind_method(D_METHOD("set_input_dict", "dict"), &FPSController::set_input_dict);
+    ClassDB::bind_method(D_METHOD("get_input_dict"), &FPSController::get_input_dict);
 }
 
 void FPSController::_ready() {
@@ -73,4 +76,12 @@ void FPSController::_process(double delta) {
 
 void FPSController::_physics_process(double delta) {
 
+}
+
+Dictionary FPSController::get_input_dict() const {
+    return input_dict;
+}
+
+void FPSController::set_input_dict(Dictionary dict) {
+    input_dict = dict;
 }

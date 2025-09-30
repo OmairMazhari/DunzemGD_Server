@@ -16,6 +16,7 @@ public:
     virtual void Exit() {}
     virtual void Update(double delta) {}
 
+
 protected:
     static void _bind_methods(){
         // Signals
