@@ -25,6 +25,7 @@ func _ready():
 func on_peer_connected(id: int):
 	print("Peer connected" + str(id))
 	var player: Node3D = SERVER_FPS_CONTROLLER.instantiate()
+	
 	var range = 10
 	player.global_position = Vector3(randf_range(-range, range),randf_range(-range, range),randf_range(-range, range)) 
 	world.add_child(player)

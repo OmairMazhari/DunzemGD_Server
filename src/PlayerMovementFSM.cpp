@@ -1,17 +1,24 @@
 #include "PlayerMovementFSM.h"
 #include "godot_cpp/classes/input.hpp"
+#include "utils.hpp"
+
+
 using namespace godot;
 
 PlayerMovementFSM::PlayerMovementFSM() {}
 
 PlayerMovementFSM::~PlayerMovementFSM() {}
 
+
+
 void PlayerMovementFSM::_process(double delta) {
     if(current_state){
         current_state->Update(delta);
     }
     if(player) {
-        Vector2 input_dir = Input::get_singleton()->get_vector("left", "right", "up", "down").normalized();
+        // Input dir calculated through the recived input now
+        Vector2 input_dir = server::get_custom_vector(player->get_input_dict(), "left", "right", "up", "down");
+
         wish_dir = player->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));
         cam_aligned_wish_dir = player->get_camera()->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));
     }

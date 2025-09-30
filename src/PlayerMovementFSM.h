@@ -18,8 +18,10 @@ public:
     
     // Overriden functions
     void _process(double delta) override;
+    // Class functions
 
 protected:
+
     static void _bind_methods();
 
 private:
@@ -27,6 +29,7 @@ private:
     Ref<PlayerMovementStatsResource> stats;
     Vector3 wish_dir = Vector3();
     Vector3 cam_aligned_wish_dir = Vector3();
+
 
 public:
     // Getters and setters for export variables
