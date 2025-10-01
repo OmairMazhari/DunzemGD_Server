@@ -22,6 +22,10 @@ void FPSController::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_input_dict", "dict"), &FPSController::set_input_dict);
     ClassDB::bind_method(D_METHOD("get_input_dict"), &FPSController::get_input_dict);
+
+    ClassDB::bind_method(D_METHOD("get_camera"), &FPSController::get_camera);
+
+    ClassDB::bind_method(D_METHOD("handle_mouse_input", "x_offset", "y_offset"), &FPSController::handle_mouse_input);
 }
 
 void FPSController::_ready() {
@@ -39,16 +43,14 @@ void FPSController::_ready() {
             child = Object::cast_to<VisualInstance3D>(children[i]);
             child->set_layer_mask_value(1, false);
             child->set_layer_mask_value(2, true);
-            UtilityFunctions::print("Yes");
         }
     } 
     // Set the weapon viewport to right size
     sub_viewport->set_size(DisplayServer::get_singleton()->window_get_size());
 }
 
-void FPSController::handle_mouse_input() {
+void FPSController::handle_mouse_input(float x_offset, float y_offset) {
     // Capture mouse on click
-    Dictionary client_input = get_input_dict();
     // InputEventMouseButton* mouseMotionButton = Object::cast_to<InputEventMouseButton>(p_event.ptr());
     // if(mouseMotionButton){
     //     input->set_mouse_mode(input->MOUSE_MODE_CAPTURED);
@@ -56,19 +58,14 @@ void FPSController::handle_mouse_input() {
     //     input->set_mouse_mode(input->MOUSE_MODE_VISIBLE);
     // }
     // Control mouse motion
-  
-        if(client_input.has("mouse_x_offset") && client_input.has("mouse_y_offset") && client_input.has("mouse_motion_event")){
-            if(client_input["mouse_motion_event"]) {
-                rotate_y(-(float)client_input["mouse_x_offset"] * lookSensitivity);
-                camera->rotate_x(-(float)client_input["mouse_y_offset"] * lookSensitivity);
-            }
-            
-        }
+    rotate_y(-x_offset * lookSensitivity);
+    camera->rotate_x(-y_offset * lookSensitivity);
 
-        // Clamp the camera rotation
-        Vector3 camRotation = camera->get_rotation();
-        camRotation.x = Math::clamp(camera->get_rotation().x, Math::deg_to_rad(-90.0f), Math::deg_to_rad(90.0f));
-        camera->set_rotation(camRotation);
+
+    // Clamp the camera rotation
+    Vector3 camRotation = camera->get_rotation();
+    camRotation.x = Math::clamp(camera->get_rotation().x, Math::deg_to_rad(-90.0f), Math::deg_to_rad(90.0f));
+    camera->set_rotation(camRotation);
         
     // if (input->get_mouse_mode() == input->MOUSE_MODE_CAPTURED){
         
@@ -79,7 +76,6 @@ void FPSController::handle_mouse_input() {
 
 
 void FPSController::_process(double delta) {
-    handle_mouse_input();
 
 }
 

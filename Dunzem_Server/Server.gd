@@ -12,6 +12,7 @@ func _ready():
 	if err != OK:
 		push_error("Server failed: %s" % err)
 		return
+	
 	get_tree().get_multiplayer().multiplayer_peer = server
 	print("Server started on port 8081")
 	get_tree().get_multiplayer().peer_connected.connect(on_peer_connected)
@@ -25,8 +26,8 @@ func _ready():
 func on_peer_connected(id: int):
 	print("Peer connected" + str(id))
 	var player: Node3D = SERVER_FPS_CONTROLLER.instantiate()
-	var range = 10
-	player.global_position = Vector3(randf_range(-range, range),randf_range(-range, range),randf_range(-range, range)) 
+	var range = 5
+	player.global_position = Vector3(randf_range(-range, range), 0.0,randf_range(-range, range)) 
 	world.add_child(player)
 	players[id] = player
 	
@@ -37,10 +38,17 @@ func on_peer_disconnected(id: int):
 func _process(delta):
 	server.poll()
 	for peer_id in get_tree().get_multiplayer().get_peers():
-		rpc_id(peer_id, "set_self_position", peer_id, players[peer_id].position, players[peer_id].rotation)
+		var player_controller: FPSController = players[peer_id]
+		var player_cam : Camera3D = player_controller.get_camera()
+		rpc_id(peer_id, "set_self_position", peer_id, players[peer_id].position, player_controller.rotation, player_controller.get_camera().rotation)
 	
 	
 	
+@rpc("any_peer", "unreliable_ordered")
+func handle_mouse(x, y):
+	var id = get_tree().get_multiplayer().get_remote_sender_id()
+	var player : FPSController = players[id]
+	player.handle_mouse_input(x, y)
 	
 
 # Client → Server
@@ -51,6 +59,7 @@ func update_input(input_dict: Dictionary):
 	player_inputs[id] = input_dict
 	# Set the input dict for the player
 	players[id].set_input_dict(input_dict)
+	 
 	
 # Client → Server
 @rpc("any_peer", "unreliable_ordered")

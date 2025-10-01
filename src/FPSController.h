@@ -24,7 +24,7 @@ public:
     // Class functions
     Dictionary get_input_dict() const;
     void set_input_dict(Dictionary dict);
-    void handle_mouse_input();
+    void handle_mouse_input(float x_offset, float y_offset);
 
     // Setters and Getters for Exported Variables
     void set_lookSensitivity(float p_lookSensitivity) { lookSensitivity = p_lookSensitivity; }

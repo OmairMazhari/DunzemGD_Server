@@ -79,6 +79,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
 [node name="Camera3D" type="Camera3D" parent="Head"]
 visible = false
 cull_mask = 1048569
+current = true
 
 [node name="BulletRayCast" type="RayCast3D" parent="Head/Camera3D"]
 target_position = Vector3(0, 0, -9999)
