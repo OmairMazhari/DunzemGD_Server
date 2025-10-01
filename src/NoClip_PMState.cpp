@@ -21,12 +21,13 @@ void NoClip_PMState::Enter() {
 }
 
 void NoClip_PMState::Update(double delta) {
-	if(input->is_action_just_pressed("no_clip")){
+    Dictionary client_input = player->get_input_dict();
+	if(client_input["no_clip"]){
         UtilityFunctions::print("pressed unclip");
         FSM->change_state(this, "move_pmstate");
     }
     float speed = get_move_speed() * stats->get_no_clip_speed_mult();
-    if (input->is_action_pressed("sprint")) {
+    if (client_input["sprint"]) {
         speed *= 3.0f;
     }
     player->set_velocity(FSM->get_cam_aligned_wish_dir() * speed);

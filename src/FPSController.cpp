@@ -46,31 +46,37 @@ void FPSController::_ready() {
     sub_viewport->set_size(DisplayServer::get_singleton()->window_get_size());
 }
 
-void FPSController::_unhandled_input(const Ref<InputEvent> &p_event) {
+void FPSController::handle_mouse_input() {
     // Capture mouse on click
-    Input* input = Input::get_singleton();
-    InputEventMouseButton* mouseMotionButton = Object::cast_to<InputEventMouseButton>(p_event.ptr());
-    if(mouseMotionButton){
-        input->set_mouse_mode(input->MOUSE_MODE_CAPTURED);
-    } else if (input->is_action_just_pressed("ui_cancel")){
-        input->set_mouse_mode(input->MOUSE_MODE_VISIBLE);
-    }
+    Dictionary client_input = get_input_dict();
+    // InputEventMouseButton* mouseMotionButton = Object::cast_to<InputEventMouseButton>(p_event.ptr());
+    // if(mouseMotionButton){
+    //     input->set_mouse_mode(input->MOUSE_MODE_CAPTURED);
+    // } else if (input->is_action_just_pressed("ui_cancel")){
+    //     input->set_mouse_mode(input->MOUSE_MODE_VISIBLE);
+    // }
     // Control mouse motion
-    if (input->get_mouse_mode() == input->MOUSE_MODE_CAPTURED){
-        InputEventMouseMotion* mouseMotionEvent = Object::cast_to<InputEventMouseMotion>(p_event.ptr());
-        if(mouseMotionEvent){
-            rotate_y(-mouseMotionEvent->get_relative().x * lookSensitivity);
-            camera->rotate_x(-mouseMotionEvent->get_relative().y * lookSensitivity);
-            // Clamp the camera rotation
-            Vector3 camRotation = camera->get_rotation();
-            camRotation.x = Math::clamp(camera->get_rotation().x, Math::deg_to_rad(-90.0f), Math::deg_to_rad(90.0f));
-            camera->set_rotation(camRotation);
+  
+        if(client_input.has("mouse_x_offset") && client_input.has("mouse_y_offset")){
+            rotate_y(-(float)client_input["mouse_x_offset"] * lookSensitivity);
+            camera->rotate_x(-(float)client_input["mouse_y_offset"] * lookSensitivity);
         }
-    }
+
+        // Clamp the camera rotation
+        Vector3 camRotation = camera->get_rotation();
+        camRotation.x = Math::clamp(camera->get_rotation().x, Math::deg_to_rad(-90.0f), Math::deg_to_rad(90.0f));
+        camera->set_rotation(camRotation);
+        
+    // if (input->get_mouse_mode() == input->MOUSE_MODE_CAPTURED){
+        
+    // }
+    
+    
 }
 
 
 void FPSController::_process(double delta) {
+    handle_mouse_input();
 
 }
 

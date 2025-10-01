@@ -47,7 +47,6 @@ func update_input(input_dict: Dictionary):
 	player_inputs[id] = input_dict
 	# Set the input dict for the player
 	players[id].set_input_dict(input_dict)
-	print("Player: " + str(id) + ", Input Dict : " + str(input_dict))
 	
 	
 	

@@ -18,13 +18,13 @@ public:
 
     // Overriden functions
     void _ready() override;
-	void _unhandled_input(const Ref<InputEvent> &p_event) override;
 	void _process(double delta) override;
 	void _physics_process(double delta) override;
 
     // Class functions
     Dictionary get_input_dict() const;
     void set_input_dict(Dictionary dict);
+    void handle_mouse_input();
 
     // Setters and Getters for Exported Variables
     void set_lookSensitivity(float p_lookSensitivity) { lookSensitivity = p_lookSensitivity; }

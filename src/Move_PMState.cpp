@@ -15,15 +15,14 @@ void Move_PMState::Exit() {
 }
 
 void Move_PMState::Update(double delta) {
-    if(input->is_action_just_pressed("no_clip")){
+    Dictionary client_input = player->get_input_dict();
+
+    if(client_input["no_clip"]){
         FSM->change_state(this, "noclip_pmstate");
     }
-    UtilityFunctions::print("Printing diction from move");
-    UtilityFunctions::print(player->get_input_dict());
-     UtilityFunctions::print("Printed");
+
     if(player->is_on_floor()){
-        if(input->is_action_just_pressed("jump") || (stats->get_auto_bhop() && input->is_action_pressed("jump"))){
-           
+        if(client_input["jump"] || (stats->get_auto_bhop() && client_input["jump"])){
             player->set_velocity(Vector3(
                 player->get_velocity().x,
                 stats->get_jump_velocity(),
@@ -35,10 +34,6 @@ void Move_PMState::Update(double delta) {
         _handle_air_physics(delta);
     }
     player->move_and_slide();
-}
-
-void Move_PMState::Setup() {
-     
 }
 
 void Move_PMState::_handle_air_physics(double delta) {

@@ -41,7 +41,8 @@ protected:
     }
 
     float get_move_speed() {
-        if(input->is_action_pressed("sprint")){
+         Dictionary client_input = player->get_input_dict();
+        if(client_input["sprint"]) {
             return stats->get_sprint_speed();
         } else {
             return stats->get_walk_speed();
