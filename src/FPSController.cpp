@@ -57,9 +57,12 @@ void FPSController::handle_mouse_input() {
     // }
     // Control mouse motion
   
-        if(client_input.has("mouse_x_offset") && client_input.has("mouse_y_offset")){
-            rotate_y(-(float)client_input["mouse_x_offset"] * lookSensitivity);
-            camera->rotate_x(-(float)client_input["mouse_y_offset"] * lookSensitivity);
+        if(client_input.has("mouse_x_offset") && client_input.has("mouse_y_offset") && client_input.has("mouse_motion_event")){
+            if(client_input["mouse_motion_event"]) {
+                rotate_y(-(float)client_input["mouse_x_offset"] * lookSensitivity);
+                camera->rotate_x(-(float)client_input["mouse_y_offset"] * lookSensitivity);
+            }
+            
         }
 
         // Clamp the camera rotation

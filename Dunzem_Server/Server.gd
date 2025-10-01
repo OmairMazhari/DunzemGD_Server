@@ -25,11 +25,9 @@ func _ready():
 func on_peer_connected(id: int):
 	print("Peer connected" + str(id))
 	var player: Node3D = SERVER_FPS_CONTROLLER.instantiate()
-	
 	var range = 10
 	player.global_position = Vector3(randf_range(-range, range),randf_range(-range, range),randf_range(-range, range)) 
 	world.add_child(player)
-	
 	players[id] = player
 	
 func on_peer_disconnected(id: int):
@@ -38,6 +36,12 @@ func on_peer_disconnected(id: int):
 		
 func _process(delta):
 	server.poll()
+	for peer_id in get_tree().get_multiplayer().get_peers():
+		rpc_id(peer_id, "set_self_position", peer_id, players[peer_id].position, players[peer_id].rotation)
+	
+	
+	
+	
 
 # Client → Server
 @rpc("any_peer", "unreliable_ordered")
@@ -48,20 +52,22 @@ func update_input(input_dict: Dictionary):
 	# Set the input dict for the player
 	players[id].set_input_dict(input_dict)
 	
-	
-	
 # Client → Server
 @rpc("any_peer", "unreliable_ordered")
 func update_position(pos: Vector3):
 	var id = get_tree().get_multiplayer().get_remote_sender_id()
 	players[id] = pos
-
 	# Relay to others
 	for peer_id in get_tree().get_multiplayer().get_peers():
 		if peer_id != id:
 			rpc_id(peer_id, "set_remote_position", id, pos)
+			
 
 # Declared here too, but only clients actually use it
 @rpc("authority", "unreliable_ordered")
 func set_remote_position(peer_id: int, pos: Vector3):
+	pass
+
+@rpc("authority", "unreliable_ordered")
+func set_self_position(peer_id: int, pos: Vector3):
 	pass

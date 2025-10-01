@@ -25,6 +25,7 @@ void NoClip_PMState::Update(double delta) {
 	if(client_input["no_clip"]){
         UtilityFunctions::print("pressed unclip");
         FSM->change_state(this, "move_pmstate");
+        client_input["no_clip"] = !client_input["no_clip"];
     }
     float speed = get_move_speed() * stats->get_no_clip_speed_mult();
     if (client_input["sprint"]) {

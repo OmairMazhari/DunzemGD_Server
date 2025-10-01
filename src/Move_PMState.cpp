@@ -19,6 +19,7 @@ void Move_PMState::Update(double delta) {
 
     if(client_input["no_clip"]){
         FSM->change_state(this, "noclip_pmstate");
+        client_input["no_clip"] = !client_input["no_clip"];
     }
 
     if(player->is_on_floor()){
