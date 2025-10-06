@@ -17,7 +17,7 @@ public:
     ~PlayerMovementFSM();
     
     // Overriden functions
-    void _process(double delta) override;
+    void Update(double delta, Dictionary input_dict);
     // Class functions
 
 protected:
@@ -29,6 +29,8 @@ private:
     Ref<PlayerMovementStatsResource> stats;
     Vector3 wish_dir = Vector3();
     Vector3 cam_aligned_wish_dir = Vector3();
+
+    Dictionary input_dict;
 
 
 public:
@@ -44,4 +46,7 @@ public:
 
     void set_cam_aligned_wish_dir(Vector3 p_cam_aligned_wish_dir) { cam_aligned_wish_dir = p_cam_aligned_wish_dir; }
     Vector3 get_cam_aligned_wish_dir() const { return cam_aligned_wish_dir; }
+
+    Dictionary get_input_dict() const { return input_dict; }
+    void set_input_dict(Dictionary dict) { input_dict = dict; }
 };

@@ -11,14 +11,16 @@ PlayerMovementFSM::~PlayerMovementFSM() {}
 
 
 
-void PlayerMovementFSM::_process(double delta) {
+void PlayerMovementFSM::Update(double delta, Dictionary input_dict) {
+    this->input_dict = input_dict;
+    UtilityFunctions::print("Double delta is ");
+    UtilityFunctions::print(delta);
     if(current_state){
         current_state->Update(delta);
     }
     if(player) {
         // Input dir calculated through the recived input now
-        Vector2 input_dir = server::get_custom_vector(player->get_input_dict(), "left", "right", "up", "down");
-
+        Vector2 input_dir = server::get_custom_vector(input_dict["state_based_actions"], "left", "right", "up", "down");
         wish_dir = player->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));
         cam_aligned_wish_dir = player->get_camera()->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));
     }
@@ -33,4 +35,7 @@ void PlayerMovementFSM::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_stats", "p_stats"), &PlayerMovementFSM::set_stats);
     ClassDB::bind_method(D_METHOD("get_stats"), &PlayerMovementFSM::get_stats);
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "stats", PROPERTY_HINT_RESOURCE_TYPE, "PlayerMovementStatsResource"), "set_stats", "get_stats");
+
+    // Update function
+    ClassDB::bind_method(D_METHOD("Update", "delta", "input_dict"), &PlayerMovementFSM::Update);
 }

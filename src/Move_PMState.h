@@ -15,7 +15,7 @@ public:
     void Enter() override;
     void Exit() override;
     void Update(double delta) override;
-    void Setup();
+
 
     // Class functions
     void _handle_air_physics(double delta);
@@ -25,5 +25,5 @@ protected:
     static void _bind_methods();
 
 private:
-    Node* server = nullptr;
+   
 };

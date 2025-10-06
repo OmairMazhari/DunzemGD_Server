@@ -1,8 +1,8 @@
 [gd_resource type="PlayerMovementStatsResource" format=3 uid="uid://dx1r0x4vo53ln"]
 
 [resource]
+sprint_speed = 7.0
 auto_bhop = true
 gravity = 12.0
 air_cap = 0.85
-ground_friction = 6.0
 no_clip = true

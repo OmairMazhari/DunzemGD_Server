@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="Dunzem_Server"
-run/main_scene="uid://cumlkudt7n44b"
+run/main_scene="uid://cy1vv6ufvcajd"
 config/features=PackedStringArray("4.5", "GL Compatibility")
+run/max_fps=180
 config/icon="res://icon.svg"
 
 [autoload]
@@ -101,6 +102,10 @@ reload={
 
 3d_render/layer_1="World"
 3d_render/layer_3="Guns"
+
+[physics]
+
+common/physics_interpolation=true
 
 [rendering]
 
