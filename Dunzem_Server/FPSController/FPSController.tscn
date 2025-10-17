@@ -1,62 +1,42 @@
-[gd_scene load_steps=20 format=3 uid="uid://dqu0j5ab0ejex"]
+[gd_scene load_steps=16 format=3 uid="uid://dqu0j5ab0ejex"]
 
 [ext_resource type="PackedScene" uid="uid://gvm0me264r32" path="res://models/disguise-glasses.glb" id="1_jryqt"]
 [ext_resource type="PackedScene" uid="uid://7dm87wp0hyjg" path="res://models/wiggly_hair.tscn" id="2_vcg3l"]
-[ext_resource type="PlayerMovementStatsResource" uid="uid://dx1r0x4vo53ln" path="res://FPSController/player_movement_stats_resource.tres" id="3_vcg3l"]
-[ext_resource type="AudioStream" uid="uid://cafuelrry0igx" path="res://audio/pistol-draw-unholster-80799.mp3" id="4_48f3b"]
-[ext_resource type="AudioStream" uid="uid://bwjbcpnmx2d6f" path="res://audio/cc0-276963__gfl7__galil-reload-sound.mp3" id="5_1l80g"]
+[ext_resource type="WeaponResource" uid="uid://chgdhy3fv1gh5" path="res://Gun/test_pistol.tres" id="3_2veyp"]
+[ext_resource type="AudioStream" uid="uid://cafuelrry0igx" path="res://audio/pistol-draw-unholster-80799.mp3" id="4_24kai"]
+[ext_resource type="AudioStream" uid="uid://ciia5r5sl6puk" path="res://audio/cc0-276959__gfl7__pistol-reload-sound.mp3" id="5_4g70c"]
 [ext_resource type="PackedScene" uid="uid://jakruoxss2oj" path="res://FPSController/view_model.tscn" id="5_48f3b"]
-[ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="6_1l80g"]
-[ext_resource type="PackedScene" uid="uid://btyqjibm1juoa" path="res://proto_pistol.tscn" id="6_4g70c"]
-[ext_resource type="GunWeaponResource" uid="uid://swum6s0mlpjv" path="res://Gun/new_gun_weapon_resource.tres" id="7_o2vjx"]
-[ext_resource type="PackedScene" uid="uid://8oprf1gdg4kw" path="res://proto_pistol2.tscn" id="8_4g70c"]
-[ext_resource type="AudioStream" uid="uid://cchklld8p4183" path="res://audio/cc0-377145__nioczkus__pistol-draw-unholster.wav" id="8_eut07"]
-[ext_resource type="AudioStream" uid="uid://ciia5r5sl6puk" path="res://audio/cc0-276959__gfl7__pistol-reload-sound.mp3" id="8_o8sh2"]
-[ext_resource type="AudioStream" uid="uid://cxg235d340pok" path="res://audio/cc0-369781__morganpurkis__silenced-gunshot.wav" id="9_eut07"]
-[ext_resource type="AudioStream" uid="uid://b1nxny73maex1" path="res://audio/cc0-415912__okieactor__heathers-gunshot-effect2.wav" id="9_o8sh2"]
+[ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="6_fg75b"]
+[ext_resource type="AudioStream" uid="uid://ck761r5tgdbtw" path="res://audio/desert-eagle-gunshot-fascinatedsound-3-3-00-01.mp3" id="7_24kai"]
+[ext_resource type="PackedScene" uid="uid://6bgb1wwj1r20" path="res://proto_ak.tscn" id="8_24kai"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f6xud"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
 
-[sub_resource type="GunWeaponResource" id="GunWeaponResource_eut07"]
-fire_rate = 20.0
-shoot_anim_name = &"Shoot"
+[sub_resource type="GunWeaponResource" id="GunWeaponResource_1l80g"]
+fire_rate = 100.15
+shoot_anim_name = &"Gun_Fire"
 reload_anim_name = &"Reload"
-shoot_audio = ExtResource("9_eut07")
-reload_audio = ExtResource("5_1l80g")
-reload_time = 2.0
-reload_ui = ExtResource("6_1l80g")
-view_model_position = Vector3(0.01, 0.095, -0.385)
+shoot_audio = ExtResource("7_24kai")
+reload_audio = ExtResource("5_4g70c")
+reload_ui = ExtResource("6_fg75b")
+view_model_position = Vector3(0.045, -0.045, -0.605)
 view_model_rotation = Vector3(0, 3.1415927, 0)
-view_model_scene = ExtResource("6_4g70c")
+view_model_scene = ExtResource("8_24kai")
 equip_anim_name = &"Equip"
-equip_audio = ExtResource("4_48f3b")
-
-[sub_resource type="GunWeaponResource" id="GunWeaponResource_o8sh2"]
-is_semi_auto = true
-fire_rate = 300.0
-shoot_anim_name = &"Shoot"
-reload_anim_name = &"Reload1"
-shoot_audio = ExtResource("9_o8sh2")
-reload_audio = ExtResource("8_o8sh2")
-gun_damage = 50.0
-reload_time = 2.0
-reserve_ammo = 31
-reload_ui = ExtResource("6_1l80g")
-view_model_position = Vector3(0.045, -0.1, -0.15)
-view_model_rotation = Vector3(0, 3.142, 0)
-view_model_scale = Vector3(0.6, 0.6, 0.6)
-view_model_scene = ExtResource("8_4g70c")
-equip_anim_name = &"Equip"
-unequip_anim_name = &"Unequip"
-equip_audio = ExtResource("8_eut07")
-unequip_audio = ExtResource("4_48f3b")
-equip_time = 0.7
+equip_audio = ExtResource("4_24kai")
 
 [sub_resource type="LabelSettings" id="LabelSettings_1l80g"]
 
-[node name="FPSController" type="FPSController"]
+[sub_resource type="Move_PMState" id="Move_PMState_24kai"]
+jump_velocity = 7.15
+walk_speed = 14.0
+sprint_speed = 17.0
+
+[sub_resource type="NoClip_PMState" id="NoClip_PMState_4g70c"]
+
+[node name="CharacterBody3D" type="FPSController"]
 lookSensitivity = 0.001
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -80,29 +60,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
 cull_mask = 1048569
-current = true
 
 [node name="BulletRayCast" type="RayCast3D" parent="Head/Camera3D"]
 target_position = Vector3(0, 0, -9999)
-
-[node name="PlayerMovementFSM" type="PlayerMovementFSM" parent="." node_paths=PackedStringArray("player", "initial_state")]
-player = NodePath("..")
-stats = ExtResource("3_vcg3l")
-initial_state = NodePath("Move_PMState")
-
-[node name="Move_PMState" type="Move_PMState" parent="PlayerMovementFSM" node_paths=PackedStringArray("FSM")]
-FSM = NodePath("..")
-
-[node name="NoClip_PMState" type="NoClip_PMState" parent="PlayerMovementFSM" node_paths=PackedStringArray("FSM")]
-FSM = NodePath("..")
+collide_with_areas = true
 
 [node name="PlayerWeaponManager" type="PlayerWeaponManager" parent="." node_paths=PackedStringArray("bullet_ray_cast")]
-"Weapon Inventory Slots" = Array[WeaponResource]([SubResource("GunWeaponResource_eut07"), ExtResource("7_o2vjx"), SubResource("GunWeaponResource_o8sh2")])
 "Path for automatic wepaon loading" = Array[StringName]([&"res://Gun/primary/", &"res://Gun/secondary/", &"res://Gun/melee/"])
 view_model_container_path = "../SubViewportContainer/SubViewport/ViewCamera"
 bullet_ray_cast = NodePath("../Head/Camera3D/BulletRayCast")
 look_sway_factor = 0.1
 move_sway_factor = 0.1
+States = Array[ResourceState]([ExtResource("3_2veyp"), SubResource("GunWeaponResource_1l80g")])
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer" parent="PlayerWeaponManager"]
 volume_db = -22.4
@@ -117,6 +86,7 @@ grow_vertical = 2
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
 transparent_bg = true
 handle_input_locally = false
+size = Vector2i(1980, 1080)
 render_target_update_mode = 4
 
 [node name="ViewCamera" parent="SubViewportContainer/SubViewport" instance=ExtResource("5_48f3b")]
@@ -131,3 +101,16 @@ offset_bottom = 644.0
 text = "Testing
 "
 label_settings = SubResource("LabelSettings_1l80g")
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
+
+[node name="PlayerMovementFSM" type="PlayerMovementFSM" parent="." node_paths=PackedStringArray("player")]
+player = NodePath("..")
+States = Array[ResourceState]([SubResource("Move_PMState_24kai"), SubResource("NoClip_PMState_4g70c")])
+
+[node name="HitBox" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_f6xud")

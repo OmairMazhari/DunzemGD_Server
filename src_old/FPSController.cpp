@@ -26,6 +26,7 @@ void FPSController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_camera"), &FPSController::get_camera);
 
     ClassDB::bind_method(D_METHOD("handle_mouse_input", "x_offset", "y_offset"), &FPSController::handle_mouse_input);
+    
 }
 
 void FPSController::_ready() {
@@ -49,7 +50,7 @@ void FPSController::_ready() {
     sub_viewport->set_size(DisplayServer::get_singleton()->window_get_size());
 }
 
-void FPSController::handle_mouse_input(float x_offset, float y_offset) {
+void FPSController::handle_mouse_input(int x_offset, int y_offset) {
     // Capture mouse on click
     // InputEventMouseButton* mouseMotionButton = Object::cast_to<InputEventMouseButton>(p_event.ptr());
     // if(mouseMotionButton){
@@ -58,8 +59,13 @@ void FPSController::handle_mouse_input(float x_offset, float y_offset) {
     //     input->set_mouse_mode(input->MOUSE_MODE_VISIBLE);
     // }
     // Control mouse motion
+    UtilityFunctions::print("Camera Rotation Before: "  + camera->get_rotation());
+    
     rotate_y(-x_offset * lookSensitivity);
     camera->rotate_x(-y_offset * lookSensitivity);
+
+     UtilityFunctions::print(" After  : " + camera->get_rotation());
+
 
 
     // Clamp the camera rotation
@@ -70,7 +76,6 @@ void FPSController::handle_mouse_input(float x_offset, float y_offset) {
     // if (input->get_mouse_mode() == input->MOUSE_MODE_CAPTURED){
         
     // }
-    
     
 }
 

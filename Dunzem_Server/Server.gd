@@ -1,23 +1,61 @@
 extends Node
 
-var server := WebSocketMultiplayerPeer.new()
-var players := {} # peer_id -> Vector3
+var world
+
+var player_array: Array = []
+
+var player_dict : Dictionary = {
+	"id" : 0,
+	
+	"instance" : FPSController,
+	
+	"ARRAY_input_pay_load_buffer" : {
+		"input_pay_load" : {
+			"key_input" : {
+				"state_based" : {
+					"up" : false,
+					"down" : false,
+					"right" : false,
+					"left" : false
+				},
+				"event_based" : {
+					"jump" : false,
+					"no_clip" : false,
+				},
+				"mouse_input" : {
+					"offset" : Vector2.ZERO,
+					"is_processing" : true
+				}
+			}, 
+			"tick" : 0
+		}	
+	},
+	
+	"ARRAY_state_pay_load_buffer" : { 
+		"state_pay_load": {
+			"self" : {
+				"position" : Vector3.ZERO
+			}, 
+			"other" : {
+				".id" : {
+					"position" : Vector3.ZERO,
+					"rotation" : Vector3.ZERO,
+				}
+			}
+		}
+	},
+} 
+
 var player_inputs: Dictionary = {}
 
-const SERVER_FPS_CONTROLLER = preload("uid://cqewns2aeaaca")
-var world
-var player: FPSController
-var playerMovement: PlayerMovementFSM
+const SERVER_FPS_CONTROLLER = preload("res://FPSController/FPSController.tscn")
 
 # Client Prediction
 var timer: float
 var currentTick: int = 0
-var peerTick: int = 0
 var minTimeBetweenTicks: float
-
 const SERVER_TICK_RATE: float  = 30
 const BUFFER_SIZE: int  = 1024
-
 var stateBuffer: Array = []
 var inputBuffer: Array = []
 var latestServerState: Dictionary
@@ -30,32 +68,8 @@ var input_dict := {
 	"state_based_actions": {}
 }
 
-var InputPayLoad: Dictionary  = {
-	"tick" : 2,
-	"input" : input_dict
-}
+var server := WebSocketMultiplayerPeer.new()
 
-var StatePayLoad: Dictionary  = {
-	"tick" : 2,
-	"position" : Vector3.ZERO,
-	"velocity" : Vector3.ZERO
-}
-
-func on_peer_connected(id: int):
-	print("Peer connected" + str(id))
-	var player: Node3D = SERVER_FPS_CONTROLLER.instantiate()
-	var range = 5
-	player.global_position = Vector3(7.6, 13.5, 24.3)
-	player.rotation = Vector3(0,0,0) 
-	world.add_child(player)
-	players[id] = player
-	
-	
-func on_peer_disconnected(id: int):
-	print("Peer disconnected" + str(id))
-	players[id].queue_free()
-	
-	
 func _ready():
 	var err = server.create_server(8081)
 	if err != OK:
@@ -66,135 +80,132 @@ func _ready():
 	print("Server started on port 8081")
 	get_tree().get_multiplayer().peer_connected.connect(on_peer_connected)
 	get_tree().get_multiplayer().peer_disconnected.connect(on_peer_disconnected)
-	# Have the map node ready
-	world = get_tree().root.get_node("World")
-	if(world):
-		print("NOT NULL")
 	
-	# Client Prediction
-	minTimeBetweenTicks = 1 / SERVER_TICK_RATE
-	
+	initialize_nodes()
 	stateBuffer.resize(BUFFER_SIZE)
 	#inputBuffer.resize(BUFFER_SIZE)
+	
+	
+func initialize_nodes():
+	world = get_tree().root.get_node("World")
 
 
-#func _physics_process(delta: float) -> void:
-	#if(player):
-		#player.move_and_slide()
 func _physics_process(delta: float):
-	
 	server.poll()
-	if(playerMovement):
-		playerMovement.set_process(false)
-		playerMovement.set_physics_process(false)
-	# Client Prediction
-	timer += delta
-	while timer >= minTimeBetweenTicks:
-		timer -= minTimeBetweenTicks
-		HandleTick()
-		currentTick += 1
+	HandleTick(delta)
+	currentTick += 1
+	
+	
+func HandleTick(delta: float):
+	for peer_id in get_tree().get_multiplayer().get_peers():
 		
-	
-	#for peer_id in get_tree().get_multiplayer().get_peers():
-		#var player_controller: FPSController = players[peer_id]
-		#var player_cam : Camera3D = player_controller.get_camera()
-		#rpc_id(peer_id, "set_self_position", peer_id, players[peer_id].position, player_controller.rotation, player_controller.get_camera().rotation)
-	
-func HandleTick():
-	
-	
-	var id: int 
-	for peer_id in get_tree().get_multiplayer().get_peers():	
-		player = players[peer_id]
-		id = peer_id
-		playerMovement = player.get_node("PlayerMovementFSM")
+		var player : Dictionary = player_array[retrive_player_index(peer_id)]
+		var player_fps_controller : FPSController = player.instance
+		var player_movement: PlayerMovementFSM = player_fps_controller.get_node("PlayerMovementFSM")
+		print("ID: " + str(peer_id) + str(player_movement))
+		var player_weapon_manager: PlayerWeaponManager  = player_fps_controller.get_node("PlayerWeaponManager");
 
-	
+		var player_input_buffer : Array = player.input_buffer
+		var player_state_buffer : Array = player.state_buffer
 		
-	if player:
 		var bufferIndex: int = -1
-		
-		while inputBuffer.size() > 0: 
-			var input_pay_load: Dictionary
-			if inputBuffer[0]:
-				input_pay_load = inputBuffer[0]
-				inputBuffer.remove_at(0)
-				#print(inputBuffer)
+
+		while player_input_buffer.size() > 0: 
+
+			if player_input_buffer[0]:
+				
+				var input_pay_load: Dictionary = player_input_buffer[0]
+				player_input_buffer.remove_at(0)
 				
 				bufferIndex = input_pay_load.tick % BUFFER_SIZE
-				#Update player movement
-				var input_dict : Dictionary = input_pay_load.duplicate()
-				#print("input dict is " + str(input_dict) + " at tick " + str(input_pay_load.tick))
-				player.rotation = input_pay_load["rotation"]
-				player.get_node("Head/Camera3D").rotation = input_pay_load["cam_rotation"]
-				var temp_player_pos = player.position
 				
-				#print("Position Before "  + str(temp_player_pos) + " Position After " +  str(player.position))	
-				#print("Current tick" + str(input_pay_load.tick) + " Player position: " + str(player.position) + "Player rotation" + str(player.rotation) ) 
-				#
-				var state_pay_load: Dictionary = StatePayLoad.duplicate()
+				#Update player movement
+
+				var key_input_dict : Dictionary
+				key_input_dict  = input_pay_load.input.key_input
+					
+				var mouse_input_dict : Dictionary
+				mouse_input_dict  = input_pay_load.input.mouse_input
+
+				
+				# Rotate the player first
+				player_fps_controller.handle_mouse_input(mouse_input_dict.offset.x, mouse_input_dict.offset.y)
+				
+				# Move the player
+				
+				player_movement.Update(delta, key_input_dict)
+				player_weapon_manager.Update(delta, key_input_dict)
+				
+				# Store resulting data
+				var state_pay_load: Dictionary
+				
+				state_pay_load = { 
+					"tick" : 0,
+					"self" : { 
+						"position" : 0,
+						"global_transform" : 0,
+						"velocity" : 0
+					},
+					"others" : Dictionary()
+				}
+				
 				state_pay_load.tick = input_pay_load.tick
-				playerMovement.Update(minTimeBetweenTicks, input_pay_load.input)
-				state_pay_load.position = player.position
-				state_pay_load.velocity = player.velocity
-				stateBuffer[bufferIndex] = state_pay_load
-		#send to client
-			else:
-				print("Tick skipped")
+				# Self information
+				state_pay_load.self.position = player_fps_controller.global_position
+				state_pay_load.self.global_transform = player_fps_controller.global_transform
+				state_pay_load.self.velocity = player_fps_controller.velocity
+				# Information about other players
+				for other_player_id in get_tree().get_multiplayer().get_peers():
+					if other_player_id != peer_id:
+						state_pay_load.others[other_player_id] = {
+							"position"	: player_array[retrive_player_index(other_player_id)].instance.global_position,
+							"rotation"	: player_array[retrive_player_index(other_player_id)].instance.global_rotation
+						}
+						
+				player_state_buffer[bufferIndex] = state_pay_load
+				
+					
 		if bufferIndex != -1:
-			rpc_id(id, "on_server_movement_state", id, stateBuffer[bufferIndex])
-		else:
-			print("Not sending this time")
-	pass
-	
-	
-@rpc("any_peer", "unreliable_ordered")
-func on_client_input(input_pay_load: Dictionary):
-	inputBuffer.push_back(input_pay_load)
-	pass
-	
-@rpc("any_peer", "unreliable_ordered")
-func handle_mouse(x, y):
-	var id = get_tree().get_multiplayer().get_remote_sender_id()
-	var player : FPSController = players[id]
-	player.handle_mouse_input(x, y)
-	
-# Client → Server
-@rpc("any_peer", "unreliable_ordered")
-func update_input(input_dict: Dictionary):
-	#Update the input states of the player who wants to update it
-	var id = get_tree().get_multiplayer().get_remote_sender_id()
-	player_inputs[id] = input_dict
-	# Set the input dict for the player
-	players[id].set_input_dict(input_dict)
-	 
-@rpc("any_peer", "unreliable_ordered")
-func get_world_state():
-	var id = get_tree().get_multiplayer().get_remote_sender_id()
-	for peer_id in get_tree().get_multiplayer().get_peers():	
-		if peer_id != id:
-			rpc_id(id, "set_remote_position", peer_id, players[peer_id].position)
-			print("Giving world state")
+			rpc_id(peer_id, "on_server_movement_state", peer_id, player_state_buffer[bufferIndex])
 		
+		
+func retrive_player_index(id : int):
+	for i in range(player_array.size()):
+		if player_array[i].id == id :
+			return i 
+	return -1
 
-# Client → Server
+func on_peer_connected(id: int):
+	print("Player Connected: " + str(id))
+	var new_player : Dictionary = player_dict.duplicate(true)
+	new_player.id = id
+	new_player.instance = SERVER_FPS_CONTROLLER.instantiate()
+	# Set up the player in world
+	world.add_child(new_player.instance)
+	new_player.instance.global_position = Vector3(7.6, randi_range(0,10) ,24.3)
+	# Set the buffer size
+	new_player.input_buffer = Array()
+	#new_player.input_buffer.resize(BUFFER_SIZE)
+
+	new_player.state_buffer = Array()
+	new_player.state_buffer.resize(BUFFER_SIZE)
+	
+	player_array.push_back(new_player)
+	
+	
+func on_peer_disconnected(id: int):
+	print("Player Disconnected: " + str(id))
+	var player_id : int = retrive_player_index(id)
+	if player_id != -1:	
+		var player : Dictionary =  player_array[player_id]
+		player.instance.queue_free()
+		player_array.remove_at(player_id)
+
 @rpc("any_peer", "unreliable_ordered")
-func update_position(pos: Vector3):
-	var id = get_tree().get_multiplayer().get_remote_sender_id()
-	var player: Node3D = players[id]
-	# Relay to others
-	for peer_id in get_tree().get_multiplayer().get_peers():
-		if peer_id != id:
-			rpc_id(peer_id, "set_remote_position", id, pos)
-			
-
-# Declared here too, but only clients actually use it
-@rpc("authority", "unreliable_ordered")
-func set_remote_position(peer_id: int, pos: Vector3):
-	pass
-
-@rpc("authority", "unreliable_ordered")
-func set_self_position(peer_id: int, pos: Vector3):
+func on_client_input(id: int, input_pay_load: Dictionary):
+	print("Player ID :" + str(id))
+	player_array[retrive_player_index(id)].input_buffer.push_back(input_pay_load)
+	print(player_array[retrive_player_index(id)].input_buffer[0].input.key_input.state_based_actions.left_click)
 	pass
 
 @rpc("authority", "unreliable_ordered")
