@@ -27,16 +27,18 @@ void NoClip_PMState::Enter() {
 
 void NoClip_PMState::Update(double delta) {
 
+    Dictionary event_input = input["event_based_actions" ]; 
+    Dictionary state_input = input["state_based_actions"];
     // Calculate cam_aligned_wish_dir
     Vector2 input_dir = utils::get_custom_vector(input["state_based_actions"], "left", "right", "up", "down");
     cam_aligned_wish_dir = player->get_camera()->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));   
 
-	if(input["event_based_actions"]["jump"] ){
+	if(event_input["jump"]){
         FSM->change_state(Ref<ResourceState>(Object::cast_to<ResourceState>(FSM->get_states()[FSM->Move])));
     }
     float speed = get_move_speed() * no_clip_speed_mult;
     
-    if (input["state_based_actions"]["sprint"]) {
+    if (state_input["sprint"]) {
         speed *= 3.0f;
     }
     player->set_velocity(cam_aligned_wish_dir * speed);
@@ -52,7 +54,8 @@ void NoClip_PMState::Exit() {
 }
 
 float NoClip_PMState::get_move_speed() {
-	if(input["state_based_actions"]["sprint"]){
+    Dictionary state_input = (Dictionary)input["state_based_actions"];
+	if((bool)state_input["sprint"]){
         return sprint_speed;
     } else {
         return walk_speed;

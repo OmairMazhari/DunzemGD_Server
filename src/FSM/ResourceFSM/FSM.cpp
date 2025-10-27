@@ -41,14 +41,14 @@ void ResourceFSM::_ready() {
     for(int i = 0; i < states.size(); i++){
         Ref<ResourceState> state = Ref<ResourceState>(Object::cast_to<ResourceState>(states[i]));
         if(state.is_valid()){
-            states[i] = states[i].duplicate();
+            states[i] = states[i].duplicate(true);
         }
     }
-    
-     if(states[0]){
+
+    if(states[0]){
         Ref<ResourceState> initial_state = Ref<ResourceState>(Object::cast_to<ResourceState>(states[0]));
         if(initial_state.is_valid()) {
-             current_state = initial_state;
+            current_state = initial_state;
         }
     }
 }

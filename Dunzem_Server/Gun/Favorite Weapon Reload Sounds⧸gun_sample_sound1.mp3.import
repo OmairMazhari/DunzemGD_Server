@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dfw1tssl6neo5"
+path="res://.godot/imported/Favorite Weapon Reload Sounds⧸gun_sample_sound1.mp3-b51931c7e8da1145f4e28fbd46f42c99.mp3str"
+
+[deps]
+
+source_file="res://Gun/Favorite Weapon Reload Sounds⧸gun_sample_sound1.mp3"
+dest_files=["res://.godot/imported/Favorite Weapon Reload Sounds⧸gun_sample_sound1.mp3-b51931c7e8da1145f4e28fbd46f42c99.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

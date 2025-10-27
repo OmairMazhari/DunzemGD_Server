@@ -33,7 +33,7 @@ public:
     // Settes and getters
 
     void set_states(const TypedArray<ResourceState> p_states) {
-        states = p_states; 
+        states = p_states;
     }
     TypedArray<ResourceState> get_states() const { 
         return states; 

@@ -27,6 +27,8 @@ public:
     void reload_pressed();
     void reload_update();
     void reload();
+    bool got_hit();
+
     Ref<PackedScene> reload_ui;
     Label* reload_label = nullptr;
     bool reloading = false;
@@ -49,7 +51,6 @@ private:
     int magazine_capacity = 30;
     int reserve_ammo = 999;
     int max_reserve_ammo = 999;
-
    
     // Animation
     StringName shoot_anim_name;
@@ -62,6 +63,7 @@ private:
     // Class Variables
     float last_fire_time = 0.0f;
     Ref<SceneTreeTimer> reload_timer;
+    bool on_hit = false;
 
 
 public:

@@ -21,6 +21,11 @@ void WeaponResource::Setup(ResourceFSM* p_owner) {
         this->owner = Object::cast_to<PlayerWeaponManager>(p_owner);
         if(!owner) {
             UtilityFunctions::print("ERROR_FSM_NULL_IN_WEAPON_STATE");
+        } else {
+            player = Object::cast_to<FPSController>(owner->get_parent());
+            if(!player){
+                UtilityFunctions::print("ERROR_PLAYER_IN_FSM_NULL_IN_WEAPON_STATE");
+            }
         }
         
         if(view_model_scene.is_valid()){

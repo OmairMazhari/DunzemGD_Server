@@ -83,7 +83,8 @@ void Move_PMState::_handle_ground_physics(double delta) {
 }
 
 float Move_PMState::get_move_speed() {
-	if(input["state_based_actions"]["sprint"]){
+    Dictionary state_input = (Dictionary)input["state_based_actions"];
+	if(state_input["sprint"]){
             return sprint_speed;
         } else {
             return walk_speed;

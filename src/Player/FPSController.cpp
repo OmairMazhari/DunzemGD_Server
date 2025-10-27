@@ -22,12 +22,29 @@ void FPSController::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "lookSensitivity"), "set_lookSensitivity", "get_lookSensitivity");
     // hanlde_mouse_input
     ClassDB::bind_method(D_METHOD("handle_mouse_input", "x_offset", "y_offset"), &FPSController::handle_mouse_input);
-    // Health
-    ClassDB::bind_method(D_METHOD("set_health", "p_val"), &FPSController::set_health);
-    ClassDB::bind_method(D_METHOD("get_health"), &FPSController::get_health);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "lookSensitivity"), "set_lookSensitivity", "get_lookSensitivity");
+    // max_health
+    ClassDB::bind_method(D_METHOD("set_max_health", "p_val"), &FPSController::set_max_health);
+    ClassDB::bind_method(D_METHOD("get_max_health"), &FPSController::get_max_health);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_health"), "set_max_health", "get_max_health");
+    // curr_health
+    ClassDB::bind_method(D_METHOD("set_curr_health", "p_val"), &FPSController::set_curr_health);
+    ClassDB::bind_method(D_METHOD("get_curr_health"), &FPSController::get_curr_health);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "curr_health"), "set_curr_health", "get_curr_health");
     // Update
     ClassDB::bind_method(D_METHOD("Update", "delta"), &FPSController::Update);
+    // is_dead
+    ClassDB::bind_method(D_METHOD("is_dead"), &FPSController::is_dead);
+
+     // get_hit
+    ClassDB::bind_method(D_METHOD("get_hit"), &FPSController::get_hit);
+     // set_hit
+    ClassDB::bind_method(D_METHOD("set_hit"), &FPSController::set_hit);
+
+    // get_combat_report
+    ClassDB::bind_method(D_METHOD("get_combat_report"), &FPSController::get_combat_report);
+    // set_combat_report
+    ClassDB::bind_method(D_METHOD("set_combat_report", "p_val"), &FPSController::set_combat_report);
+
 
 }
 
@@ -78,16 +95,27 @@ void FPSController::handle_mouse_input(int x_offset, int y_offset) {
 }
 
 void FPSController::take_damage(int damage) {
-    health -= damage;
-    if (health <= 0){
-        health = 0;
+    curr_health -= damage;
+    if (curr_health <= 0){
+        curr_health = 0;
         on_dead();
     }
 }
 
 void FPSController::on_dead() {
-    queue_free();
     return;
+}
+
+bool FPSController::get_hit() {
+	return on_hit;
+}
+
+void FPSController::set_hit(bool hit) {
+    on_hit = hit;
+}
+
+bool FPSController::is_dead() {
+	return curr_health;
 }
 
 void FPSController::_process(double delta) {

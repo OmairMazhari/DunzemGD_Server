@@ -3346,3 +3346,14 @@ script = ExtResource("2_jh571")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.67059493, 0.7418237, 0, -0.7418237, 0.67059493, 0, 22.535816, 31.603708)
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="Spawn1" type="Node3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.806157, 0, 24.129013)
+
+[node name="Spawn2" type="Node3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.014173, 0, -20.849882)
+
+[node name="Spawn3" type="Node3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.282846, 0, -6.5681734)

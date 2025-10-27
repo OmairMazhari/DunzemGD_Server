@@ -1,0 +1,121 @@
+[gd_scene load_steps=15 format=3 uid="uid://b4ugfx7ximt57"]
+
+[ext_resource type="PackedScene" uid="uid://gvm0me264r32" path="res://models/disguise-glasses.glb" id="1_jryqt"]
+[ext_resource type="PackedScene" uid="uid://7dm87wp0hyjg" path="res://models/wiggly_hair.tscn" id="2_vcg3l"]
+[ext_resource type="AudioStream" uid="uid://cafuelrry0igx" path="res://audio/pistol-draw-unholster-80799.mp3" id="4_24kai"]
+[ext_resource type="AudioStream" uid="uid://ciia5r5sl6puk" path="res://audio/cc0-276959__gfl7__pistol-reload-sound.mp3" id="5_4g70c"]
+[ext_resource type="PackedScene" uid="uid://jakruoxss2oj" path="res://FPSController/view_model.tscn" id="5_48f3b"]
+[ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="6_fg75b"]
+[ext_resource type="AudioStream" uid="uid://ck761r5tgdbtw" path="res://audio/desert-eagle-gunshot-fascinatedsound-3-3-00-01.mp3" id="7_24kai"]
+[ext_resource type="PackedScene" uid="uid://6bgb1wwj1r20" path="res://proto_ak.tscn" id="8_24kai"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f6xud"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
+
+[sub_resource type="GunWeaponResource" id="GunWeaponResource_1l80g"]
+fire_rate = 100.15
+shoot_anim_name = &"Gun_Fire"
+reload_anim_name = &"Reload"
+shoot_audio = ExtResource("7_24kai")
+reload_audio = ExtResource("5_4g70c")
+gun_damage = 10.0
+reload_ui = ExtResource("6_fg75b")
+view_model_position = Vector3(0.045, -0.045, -0.605)
+view_model_rotation = Vector3(0, 3.1415927, 0)
+view_model_scene = ExtResource("8_24kai")
+equip_anim_name = &"Equip"
+equip_audio = ExtResource("4_24kai")
+
+[sub_resource type="LabelSettings" id="LabelSettings_1l80g"]
+
+[sub_resource type="Move_PMState" id="Move_PMState_24kai"]
+walk_speed = 20.0
+sprint_speed = 25.0
+ground_friction = 6.0
+
+[sub_resource type="NoClip_PMState" id="NoClip_PMState_4g70c"]
+
+[node name="CharacterBody3D" type="FPSController"]
+lookSensitivity = 0.001
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_f6xud")
+
+[node name="WorldModel" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WorldModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_2veyp")
+
+[node name="disguise-glasses" parent="WorldModel" instance=ExtResource("1_jryqt")]
+transform = Transform3D(-2.2, 0, 2.68221e-07, 0, 2.2, 0, -2.68221e-07, 0, -2.2, 0, 1.2, -0.1)
+
+[node name="WigglyHair" parent="WorldModel" instance=ExtResource("2_vcg3l")]
+transform = Transform3D(2.58393, 0, 3.97904e-13, 0, 2.13661, 0, -3.97904e-13, 0, 2.58393, 0, 1.82524, 0)
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+cull_mask = 1048569
+current = true
+
+[node name="BulletRayCast" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -9999)
+collision_mask = 8
+collide_with_areas = true
+
+[node name="PlayerWeaponManager" type="PlayerWeaponManager" parent="." node_paths=PackedStringArray("bullet_ray_cast")]
+"Path for automatic wepaon loading" = Array[StringName]([&"res://Gun/primary/", &"res://Gun/secondary/", &"res://Gun/melee/"])
+view_model_container_path = "../SubViewportContainer/SubViewport/ViewCamera"
+bullet_ray_cast = NodePath("../Head/Camera3D/BulletRayCast")
+look_sway_factor = 0.1
+move_sway_factor = 0.1
+States = Array[ResourceState]([SubResource("GunWeaponResource_1l80g")])
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer" parent="PlayerWeaponManager"]
+volume_db = -50.732
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1980, 1080)
+render_target_update_mode = 0
+
+[node name="ViewCamera" parent="SubViewportContainer/SubViewport" instance=ExtResource("5_48f3b")]
+look_sway_factor = 0.11
+move_sway_factor = 0.16
+
+[node name="Label" type="Label" parent="."]
+offset_left = 946.0
+offset_top = 595.0
+offset_right = 1146.0
+offset_bottom = 644.0
+text = "Testing
+"
+label_settings = SubResource("LabelSettings_1l80g")
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
+
+[node name="PlayerMovementFSM" type="PlayerMovementFSM" parent="." node_paths=PackedStringArray("player")]
+player = NodePath("..")
+States = Array[ResourceState]([SubResource("Move_PMState_24kai"), SubResource("NoClip_PMState_4g70c")])
+
+[node name="HitBox" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBox"]
+transform = Transform3D(1.195, 0, 0, 0, 1.195, 0, 0, 0, 1.195, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_f6xud")

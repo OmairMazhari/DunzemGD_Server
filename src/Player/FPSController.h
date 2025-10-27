@@ -30,6 +30,10 @@ public:
     void take_damage(int damage);
     void on_dead();
 
+    bool get_hit();
+    void set_hit(bool hit);
+    bool is_dead();
+
 
     // Setters and Getters for Exported Variables
     void set_lookSensitivity(float p_lookSensitivity) { lookSensitivity = p_lookSensitivity; }
@@ -38,8 +42,20 @@ public:
     Camera3D* get_camera() { return camera; }
     CollisionShape3D* get_collision_shape() { return collision_shape; }
 
-    int get_health() { return health; }
-    void set_health(int p_val) { health = p_val; }
+    int get_max_health() { return max_health; }
+    void set_max_health(int p_val) {
+         max_health = p_val;
+         curr_health = max_health;
+         }
+
+    int get_curr_health() { return curr_health; }
+    void set_curr_health(int p_val) { curr_health = p_val; }
+
+    TypedArray<Dictionary> get_combat_report() { return combat_report; }
+    void set_combat_report(TypedArray<Dictionary> p_val) { combat_report = p_val; }
+    void add_combat_report(Dictionary p_val) {
+        combat_report.push_back(p_val);
+    }
 
 
 protected:
@@ -54,11 +70,15 @@ private:
     SubViewport* sub_viewport = nullptr;
     Marker3D* cameraAnchor = nullptr;
     
+    // Class Variables
     Vector2 mouse_event;
     Vector2 input_rotation;
     Vector3 head_origin_position;
+    bool on_hit = false;
+    TypedArray<Dictionary> combat_report;
 
     // Exported Variables
     float lookSensitivity = 0.005;
-    int health = 100;
+    int max_health = 100;
+    int curr_health = 100;
 };

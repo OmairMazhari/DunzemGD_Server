@@ -51,17 +51,19 @@ void PlayerWeaponManager::_process(double delta) {
 
 void PlayerWeaponManager::_ready() {
 	GAME_ONLY
-
+    // ResourceFSM::_ready();
+    
     // Set up scene tree variablesz
     view_model_container = get_node<Node3D>(view_model_container_path);
 
     // Setup all the weapon states
     for(int i = 0; i < states.size(); i++){
-        Ref<WeaponResource> current_weapon = states[i];
+        states[i] = states[i].duplicate();
+        Ref<WeaponResource> current_weapon = Ref<WeaponResource>(Object::cast_to<WeaponResource>(states[i]));
         current_weapon->Setup(this);
     }
 
-    // Set the initial state
+    // // Set the initial state
     change_state(Ref<WeaponResource>(Object::cast_to<WeaponResource>(states[Primary])));
 }
 

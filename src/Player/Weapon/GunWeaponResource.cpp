@@ -22,6 +22,10 @@ void GunWeaponResource::Setup(ResourceFSM *owner) {
     }
 }
 
+bool GunWeaponResource::got_hit() {
+	return on_hit;
+}
+
 void GunWeaponResource::Enter() {
     WeaponResource::Enter();
     reload_label->set_visible(true);
@@ -94,6 +98,7 @@ void GunWeaponResource::trigger_up() {
 void GunWeaponResource::shoot() {
     play_anim(shoot_anim_name);
     play_audio(shoot_audio);
+
     // Handle bulelt collision
     if (bullet_ray_cast->is_colliding()){
         Object* obj = bullet_ray_cast->get_collider();
@@ -104,11 +109,16 @@ void GunWeaponResource::shoot() {
             rigidBody->apply_impulse(-normal * 50.0f / rigidBody->get_mass(), point - rigidBody->get_global_position());
         }
         Area3D* area= Object::cast_to<Area3D>(obj);
+        FPSController* enemy_player = Object::cast_to<FPSController>(area->get_parent());
         if(area){
-            FPSController* player = Object::cast_to<FPSController>(area->get_parent());
-            UtilityFunctions::print("Hitbox entered");
-             if(player) {
-            player->take_damage(gun_damage);
+            if(enemy_player) {
+            // Tell gun owner they got a hit 
+            player->set_hit(true);
+            Dictionary combat_report;
+            combat_report["damage"] = gun_damage;
+            player->add_combat_report(combat_report);
+            
+            enemy_player->take_damage(gun_damage);
             UtilityFunctions::print("Damage done to player");
             }
         }
@@ -161,7 +171,9 @@ void GunWeaponResource::ADS() {
 }
 
 void GunWeaponResource::_bind_methods() {
-     // Bool
+    // got_hit
+    ClassDB::bind_method(D_METHOD("got_hit"), &GunWeaponResource::got_hit);
+    // Bool
     ClassDB::bind_method(D_METHOD("set_is_semi_auto", "value"), &GunWeaponResource::set_is_semi_auto);
     ClassDB::bind_method(D_METHOD("get_is_semi_auto"), &GunWeaponResource::get_is_semi_auto);
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_semi_auto"), "set_is_semi_auto", "get_is_semi_auto");

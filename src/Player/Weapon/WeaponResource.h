@@ -15,6 +15,7 @@
 #include <Global.hpp>
 #include "PlayerWeaponManager.h"
 #include <FSM/ResourceFSM/State.h>
+#include <Player/FPSController.h>
 
 using namespace godot;
 
@@ -46,7 +47,6 @@ public:
     
 protected:
     // Export
-
     // World model
     Node3D* world_model_container = nullptr;
     Vector3 world_model_position = Vector3();
@@ -81,7 +81,9 @@ protected:
     Ref<SceneTreeTimer> equip_timer;
     PlayerWeaponManager* owner = nullptr;
     RayCast3D* bullet_ray_cast = nullptr;
-    
+
+    FPSController* player = nullptr;
+
     Dictionary input;
      
 protected:
