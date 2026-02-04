@@ -27,7 +27,7 @@ public:
     // Class functions
     void Update(double delta);
     void handle_mouse_input(int x_offset, int y_offset);
-    void take_damage(int damage);
+    bool take_damage(int damage);
     void on_dead();
 
     bool get_hit();
@@ -41,6 +41,10 @@ public:
 
     Camera3D* get_camera() { return camera; }
     CollisionShape3D* get_collision_shape() { return collision_shape; }
+    
+    void set_kills(float p_kills) { kills = p_kills; }
+    int get_kills() const { return kills; }
+    
 
     int get_max_health() { return max_health; }
     void set_max_health(int p_val) {
@@ -74,8 +78,10 @@ private:
     Vector2 mouse_event;
     Vector2 input_rotation;
     Vector3 head_origin_position;
+
     bool on_hit = false;
     TypedArray<Dictionary> combat_report;
+    int kills = 0;
 
     // Exported Variables
     float lookSensitivity = 0.005;

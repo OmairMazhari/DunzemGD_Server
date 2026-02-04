@@ -4,7 +4,8 @@ var world : Node3D
 var spawns : Node3D
 
 var player_array: Array = []
-
+var dead_players: Dictionary = {
+}
 var player_dict : Dictionary = {
 	"id" : 0,
 	
@@ -50,7 +51,8 @@ var player_dict : Dictionary = {
 
 var player_inputs: Dictionary = {}
 
-const SERVER_FPS_CONTROLLER = preload("res://FPSController/FPSController.tscn")
+const FPS_CONTROLLER_OLD = preload("res://FPSController/FPSController.tscn")
+const SERVER_FPS_CONTROLLER = preload("C:/Users/notxc/OneDrive/Documents/dunzem/DunzemGD_Server/Dunzem_Server/FPSController/FPSController_old.tscn")
 
 
 # Client Prediction
@@ -76,6 +78,33 @@ const RESPAWN_TIME : float = 2000
 
 var server := WebSocketMultiplayerPeer.new()
 
+# Game
+enum GameState {
+	GAME = 0,
+	VOTING = 1
+}
+
+var current_game_state : GameState 
+
+var game_length = 1200000
+var game_time_left = 0
+var game_time_started = 0
+
+var voting_time = 1
+var voting_time_left = voting_time
+var voting_time_started = 0
+
+const BOXY_MAP = preload("uid://cy1vv6ufvcajd")
+const STARTER_SCENE = preload("uid://cumlkudt7n44b")
+const LITTLE_TOWN = preload("uid://bnrna4agc6nqh")
+const TDM_MAP = preload("uid://b1hytnu5uiwd5")
+
+
+
+
+
+
+
 func _ready():
 	var err = server.create_server(8081)
 	if err != OK:
@@ -83,23 +112,80 @@ func _ready():
 		return
 	
 	get_tree().get_multiplayer().multiplayer_peer = server
-	print("Server started on port 808")
+	print("Server started on port 8081")
 	get_tree().get_multiplayer().peer_connected.connect(on_peer_connected)
 	get_tree().get_multiplayer().peer_disconnected.connect(on_peer_disconnected)
 	
-	initialize_nodes()
+	start_new_game(TDM_MAP)
 	stateBuffer.resize(BUFFER_SIZE)
+	
+	game_time_left = game_length
+	game_time_started = Time.get_ticks_msec()
 	#inputBuffer.resize(BUFFER_SIZE)
 	
+func start_new_game(map : PackedScene):
+	game_time_left = game_length
+	get_tree().call_deferred(&"change_scene_to_packed", map)
+	
+	get_tree().connect("scene_changed", Callable(self, "_on_scene_changed"))
+	pass
+
+func _on_scene_changed() -> void:
+	#Initialize nodes
+	initialize_nodes()
+	
+	#Reset and refill player array for new lobby
+	player_array = []
+	for peer_id in get_tree().get_multiplayer().get_peers():
+		on_peer_connected(peer_id)
+		
+func game_end():
+	get_tree().current_scene.queue_free()
+	
+	current_game_state = GameState.VOTING
+	voting_time_started = Time.get_ticks_msec()
+	
+	voting_time_left = voting_time
+	pass
+
+# Voting State
+func start_voting():
+	
+	pass
+
+func voting_phase():
+	voting_time_left = voting_time - (Time.get_ticks_msec() - voting_time_started)
+	#print("time left"  + str(voting_time_left))
+	if(voting_time_left <= 0):
+		end_voting()
+	pass
+	
+func end_voting():
+	current_game_state = GameState.GAME
+	
+	game_time_started = Time.get_ticks_msec()
+	game_time_left = game_length
+	
+	start_new_game(TDM_MAP)
+	pass
+	
+
 	
 func initialize_nodes():
 	world = get_tree().root.get_node("World")
 	spawns = world.get_node("Spawns")
 
 func _physics_process(delta: float):
-	server.poll()
-	HandleTick(delta)
-	currentTick += 1
+	if current_game_state == GameState.GAME:
+		game_time_left = game_length - (Time.get_ticks_msec() - game_time_started)
+		print("time left"  + str(game_time_left))
+		if(game_time_left <= 0):
+			game_end()
+		server.poll()
+		HandleTick(delta)
+		currentTick += 1
+	elif current_game_state == GameState.VOTING:
+		voting_phase()
 	
 	
 func HandleTick(delta: float):
@@ -107,32 +193,85 @@ func HandleTick(delta: float):
 	# Store everyone's information into the dictionary
 	var other_players_info : Dictionary
 	for other_player_id in get_tree().get_multiplayer().get_peers():
+		if !dead_players.has(other_player_id):
 			other_players_info[other_player_id] = {
 				"position"	: player_array[retrive_player_index(other_player_id)].instance.global_position,
 				"rotation"	: player_array[retrive_player_index(other_player_id)].instance.global_rotation,
-				"input" : {}
+				"input" : {},
+				"dead" : player_array[retrive_player_index(other_player_id)].instance.is_dead()
 				}
+				
 			if player_array[retrive_player_index(other_player_id)].input_buffer.size() > 0: 
 				if player_array[retrive_player_index(other_player_id)].input_buffer[0]:
 					other_players_info[other_player_id].input = player_array[retrive_player_index(other_player_id)].input_buffer[0].input.key_input
+		else: 
+			other_players_info[other_player_id] = {
+				"position"	: 0,
+				"rotation"	: 0,
+				"input" : {},
+				"dead" : true
+				}
+			 
 						
 	for peer_id in get_tree().get_multiplayer().get_peers():
 		
+		if(dead_players.has(peer_id)):
+			print("time since dead : " + str(Time.get_ticks_msec() - dead_players[peer_id].time_dead))
+			if RESPAWN_TIME <= Time.get_ticks_msec() - dead_players[peer_id].time_dead:
+				dead_players.erase(peer_id)
+				on_peer_connected(peer_id)
+				rpc_id(peer_id, "on_respawn")
+			else:
+				var state_pay_load : Dictionary
+				state_pay_load.others = other_players_info
+				rpc_id(peer_id, "on_server_movement_state", peer_id, state_pay_load)
+				continue
+			pass
+			
 		var player_state_dict : Dictionary = player_array[retrive_player_index(peer_id)]
 		var player : Dictionary = player_array[retrive_player_index(peer_id)]	
 		var player_fps_controller : FPSController = player.instance	
+		
+		var state_pay_load: Dictionary
 				
-		if !player_fps_controller.is_dead() && !player_state_dict.time_dead:
-			player_state_dict.respawn_timer = RESPAWN_TIME
-			player_state_dict.time_dead = Time.get_ticks_msec()
-		
+		state_pay_load = { 
+			"tick" : 0,
+			"self" : { 
+				"position" : 0,
+				"global_transform" : 0,
+				"velocity" : 0,
+				"respawn_timer" : 0,
+				"combat": {
+					"on_hit" : 0,
+					"part" : 0,
 					
-		
-		if player_state_dict.respawn_timer >= Time.get_ticks_msec() - player_state_dict.time_dead:
-			player_state_dict.time_dead = 0
-			var spawn_point : Node3D = spawns.get_child(randi_range(0,2))
-			player_fps_controller.set_curr_health(player_fps_controller.max_health)
-			player_fps_controller.global_position = spawn_point.global_position
+				},
+				"on_hit" : 0,
+				"dead" : false
+			},
+			"others" : Dictionary()
+		}
+				
+		#if player_fps_controller.is_dead() && !player_state_dict.time_dead:
+			#player_state_dict.respawn_timer = RESPAWN_TIME
+			#player_state_dict.time_dead = Time.get_ticks_msec()
+			#on_peer_disconnected(peer_id)
+			#dead_players[peer_id].time_dead = Time.get_ticks_msec()
+			#rpc_id(peer_id, "on_dead")
+			
+		if player_fps_controller.is_dead():
+			rpc_id(peer_id, "on_dead")
+			dead_players.get_or_add(peer_id)
+			dead_players[peer_id] = { "time_dead" : Time.get_ticks_msec()}
+			on_peer_disconnected(peer_id)
+				
+		#state_pay_load.self.dead = player_fps_controller.is_dead()
+		#
+		#if player_state_dict.respawn_timer <= Time.get_ticks_msec() - player_state_dict.time_dead && player_fps_controller.is_dead():
+			#player_state_dict.time_dead = 0
+			#var spawn_point : Node3D = spawns.get_child(randi_range(0,2))
+			#player_fps_controller.set_curr_health(player_fps_controller.max_health)
+			#player_fps_controller.global_position = spawn_point.global_position
 			
 
 		var player_movement: PlayerMovementFSM = player_fps_controller.get_node("PlayerMovementFSM")
@@ -159,34 +298,23 @@ func HandleTick(delta: float):
 			
 				
 				# Rotate the player first
-				player_fps_controller.handle_mouse_input(mouse_input_dict.offset.x, mouse_input_dict.offset.y)
-	
+				#player_fps_controller.handle_mouse_input(mouse_input_dict.offset.x, mouse_input_dict.offset.y)
+				
+				player_fps_controller.get_node("Head/Camera3D").rotation.x = input_pay_load.input.rotation.x
+				player_fps_controller.rotation.y = input_pay_load.input.rotation.y
+				print("player rotatoin at tick " + str(currentTick) + "is : " + str(player_fps_controller.get_node("Head/Camera3D").rotation.x) + ", " + str(player_fps_controller.rotation.y))
+				
 				# Move the player
 				if !(!player_fps_controller.is_dead() && player_state_dict.time_dead != 0):
 					pass
 					
-				player_movement.Update(delta, key_input_dict)
+				player_movement.set_wish_dir(input_pay_load.input.wish_dir)
+				print("wish dir is : " + str(input_pay_load.input.wish_dir))
+				player_movement.Update(delta, key_input_dict, input_pay_load.input.wish_dir)
 				player_weapon_manager.Update(delta, key_input_dict)
 				
 				# Store resulting data
-				var state_pay_load: Dictionary
 				
-				state_pay_load = { 
-					"tick" : 0,
-					"self" : { 
-						"position" : 0,
-						"global_transform" : 0,
-						"velocity" : 0,
-						"respawn_timer" : 0,
-						"combat": {
-							"on_hit" : 0,
-							"part" : 0,
-							
-						},
-						"on_hit" : 0
-					},
-					"others" : Dictionary()
-				}
 				
 				state_pay_load.tick = input_pay_load.tick
 				# Self information
@@ -195,11 +323,9 @@ func HandleTick(delta: float):
 				state_pay_load.self.velocity = player_fps_controller.velocity
 				state_pay_load.self.health = player_fps_controller.curr_health
 				state_pay_load.self.combat = player_fps_controller.get_combat_report()
-				
 				rpc_id(peer_id, "reliable_client_input", player_fps_controller.get_combat_report())
 				#print("combat report : " + str(state_pay_load.self.combat) + " at tick " + str(state_pay_load.tick))
 				player_fps_controller.set_combat_report([])
-				
 				
 				# Information about other players
 				state_pay_load.others = other_players_info
@@ -230,17 +356,17 @@ func on_peer_connected(id: int):
 
 	new_player.state_buffer = Array()
 	new_player.state_buffer.resize(BUFFER_SIZE)
-	
+
 	player_array.push_back(new_player)
 	
 	# Inform about the new game
-	rpc_id(id, "on_new_game_joined", "boxy_map")
+	rpc_id(id, "on_new_game_joined", "tdm")
 	
 	
 func on_peer_disconnected(id: int):
 	print("Player Disconnected: " + str(id))
 	var player_id : int = retrive_player_index(id)
-	if player_id != -1:	
+	if player_id != -1:
 		var player : Dictionary =  player_array[player_id]
 		if(player.instance) :
 			player.instance.queue_free()
@@ -261,4 +387,12 @@ func on_server_movement_state( state_pay_load: Dictionary):
 	
 @rpc("authority", "unreliable_ordered")
 func on_new_game_joined(map):
+	pass
+
+@rpc("authority", "unreliable_ordered")
+func on_dead():
+	pass
+	
+@rpc("authority", "unreliable_ordered")
+func on_respawn():
 	pass

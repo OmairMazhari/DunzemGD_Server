@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://b4ugfx7ximt57"]
+[gd_scene load_steps=16 format=3 uid="uid://cd0ersegtgok3"]
 
 [ext_resource type="PackedScene" uid="uid://gvm0me264r32" path="res://models/disguise-glasses.glb" id="1_jryqt"]
 [ext_resource type="PackedScene" uid="uid://7dm87wp0hyjg" path="res://models/wiggly_hair.tscn" id="2_vcg3l"]
@@ -8,13 +8,12 @@
 [ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="6_fg75b"]
 [ext_resource type="AudioStream" uid="uid://ck761r5tgdbtw" path="res://audio/desert-eagle-gunshot-fascinatedsound-3-3-00-01.mp3" id="7_24kai"]
 [ext_resource type="PackedScene" uid="uid://6bgb1wwj1r20" path="res://proto_ak.tscn" id="8_24kai"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f6xud"]
+[ext_resource type="PackedScene" uid="uid://e5sbxq0blrj6" path="res://FPSController/protobot.tscn" id="9_vouyj"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
 
 [sub_resource type="GunWeaponResource" id="GunWeaponResource_1l80g"]
-fire_rate = 100.15
+fire_rate = 50.0
 shoot_anim_name = &"Gun_Fire"
 reload_anim_name = &"Reload"
 shoot_audio = ExtResource("7_24kai")
@@ -30,35 +29,43 @@ equip_audio = ExtResource("4_24kai")
 [sub_resource type="LabelSettings" id="LabelSettings_1l80g"]
 
 [sub_resource type="Move_PMState" id="Move_PMState_24kai"]
-walk_speed = 20.0
-sprint_speed = 25.0
+jump_velocity = 4.0
+walk_speed = 11.0
+sprint_speed = 17.0
+auto_bhop = true
+air_cap = 0.85
 ground_friction = 6.0
 
 [sub_resource type="NoClip_PMState" id="NoClip_PMState_4g70c"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sc65h"]
+radius = 0.2
+height = 1.825125
+
 [node name="CharacterBody3D" type="FPSController"]
 lookSensitivity = 0.001
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("CapsuleShape3D_f6xud")
+max_health = 100.0
 
 [node name="WorldModel" type="Node3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="WorldModel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_2veyp")
 
 [node name="disguise-glasses" parent="WorldModel" instance=ExtResource("1_jryqt")]
 transform = Transform3D(-2.2, 0, 2.68221e-07, 0, 2.2, 0, -2.68221e-07, 0, -2.2, 0, 1.2, -0.1)
+visible = false
 
 [node name="WigglyHair" parent="WorldModel" instance=ExtResource("2_vcg3l")]
 transform = Transform3D(2.58393, 0, 3.97904e-13, 0, 2.13661, 0, -3.97904e-13, 0, 2.58393, 0, 1.82524, 0)
+visible = false
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.3)
 cull_mask = 1048569
 current = true
 
@@ -116,6 +123,10 @@ States = Array[ResourceState]([SubResource("Move_PMState_24kai"), SubResource("N
 collision_layer = 8
 collision_mask = 8
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBox"]
-transform = Transform3D(1.195, 0, 0, 0, 1.195, 0, 0, 0, 1.195, 0, 1, 0)
-shape = SubResource("CapsuleShape3D_f6xud")
+[node name="CharacterBody" type="Node3D" parent="."]
+
+[node name="ProtoBot" parent="CharacterBody" instance=ExtResource("9_vouyj")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_sc65h")

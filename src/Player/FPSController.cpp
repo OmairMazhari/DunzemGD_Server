@@ -44,6 +44,10 @@ void FPSController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_combat_report"), &FPSController::get_combat_report);
     // set_combat_report
     ClassDB::bind_method(D_METHOD("set_combat_report", "p_val"), &FPSController::set_combat_report);
+    // kills
+    ClassDB::bind_method(D_METHOD("set_kills", "p_kills"), &FPSController::set_kills);
+    ClassDB::bind_method(D_METHOD("get_kills"), &FPSController::get_kills);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "kills"), "set_kills", "get_kills");
 
 
 }
@@ -94,12 +98,14 @@ void FPSController::handle_mouse_input(int x_offset, int y_offset) {
     camera->set_rotation(camRotation);
 }
 
-void FPSController::take_damage(int damage) {
+bool FPSController::take_damage(int damage) {
     curr_health -= damage;
     if (curr_health <= 0){
         curr_health = 0;
         on_dead();
+        return true;
     }
+    return false;
 }
 
 void FPSController::on_dead() {
@@ -115,7 +121,7 @@ void FPSController::set_hit(bool hit) {
 }
 
 bool FPSController::is_dead() {
-	return curr_health;
+	return !curr_health;
 }
 
 void FPSController::_process(double delta) {

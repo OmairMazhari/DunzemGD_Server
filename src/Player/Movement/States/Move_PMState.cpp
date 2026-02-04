@@ -5,6 +5,9 @@
 
 void Move_PMState::Setup(ResourceFSM* FSM) {
     PlayerMovementState::Setup(FSM);
+     // Character animation nodes
+    characterAnimationTree = this->FSM->get_characterAnimationTree();
+    characterAnimationPlayback = this->FSM->get_characterAnimationPlayback();
 }
 
 void Move_PMState::Enter() {
@@ -19,8 +22,16 @@ void Move_PMState::Update(double delta) {
      
     // Calculate wish_dir
     Vector2 input_dir = utils::get_custom_vector(input["state_based_actions"], "left", "right", "up", "down");
-    wish_dir =  player->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));   
+    // wish_dir =  player->get_global_transform().basis.xform(Vector3(input_dir.x, 0, input_dir.y));   
+    wish_dir = FSM->get_wish_dir();
     
+    UtilityFunctions::print("SERver wish dir is " + UtilityFunctions::str(wish_dir));
+    Vector3 rel_vel = player->get_global_basis().inverse().xform((player->get_velocity() * Vector3(1,0,1)) / get_move_speed());
+    Vector2 rel_vel_xz = Vector2(rel_vel.x, rel_vel.z);
+
+    characterAnimationPlayback->travel("RunBlendSpace2D");
+    characterAnimationTree->set("parameters/RunBlendSpace2D/blend_position", rel_vel_xz);
+
     // Move based on input
     if(event_input["no_clip"]){
         FSM->change_state(Ref<ResourceState>(Object::cast_to<ResourceState>(FSM->get_states()[FSM->No_Clip])));

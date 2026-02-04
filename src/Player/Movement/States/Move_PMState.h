@@ -4,6 +4,8 @@
 
 #include "PlayerMovementState.h"
 #include <FSM/ResourceFSM/State.h>
+#include <godot_cpp/classes/animation_tree.hpp>
+#include <godot_cpp/classes/animation_node_state_machine_playback.hpp>
 
 using namespace godot;
 
@@ -30,6 +32,10 @@ protected:
 private:
     // Class Variables
     Vector3 wish_dir = Vector3();
+
+    // Onready Variables
+    AnimationTree* characterAnimationTree = nullptr;
+    AnimationNodeStateMachinePlayback* characterAnimationPlayback = nullptr;
 
     // Export Variables
     // Basic values

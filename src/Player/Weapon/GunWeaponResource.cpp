@@ -109,17 +109,39 @@ void GunWeaponResource::shoot() {
             rigidBody->apply_impulse(-normal * 50.0f / rigidBody->get_mass(), point - rigidBody->get_global_position());
         }
         Area3D* area= Object::cast_to<Area3D>(obj);
-        FPSController* enemy_player = Object::cast_to<FPSController>(area->get_parent());
+        FPSController* enemy_player = Object::cast_to<FPSController>(area->get_parent()->get_parent()->get_parent()->get_parent()->get_parent()->get_parent()->get_parent());
         if(area){
             if(enemy_player) {
-            // Tell gun owner they got a hit 
-            player->set_hit(true);
-            Dictionary combat_report;
-            combat_report["damage"] = gun_damage;
-            player->add_combat_report(combat_report);
-            
-            enemy_player->take_damage(gun_damage);
-            UtilityFunctions::print("Damage done to player");
+                if(enemy_player != player){
+                // Tell gun owner they got a hit 
+                player->set_hit(true);
+    
+                Dictionary combat_report;
+                combat_report["kill"] = false;
+                combat_report["damage"] = 0;
+                combat_report["body_part"]  = "undef";
+
+                if (area->is_in_group("Head")){
+                    combat_report["damage"] = gun_damage * 2.0;
+                    combat_report["body_part"]  = "head";
+
+                } else if (area->is_in_group("Body")) {
+                    combat_report["damage"] = gun_damage;
+                    combat_report["body_part"]  = "body";
+
+                } else if (area->is_in_group("Leg")) { 
+                    combat_report["damage"] = gun_damage * 0.5;
+                    combat_report["body_part"]  = "leg";
+                }
+               
+                if(enemy_player->take_damage(combat_report["damage"])){
+                    player->set_kills(player->get_kills() + 1);
+                    combat_report["kill"] = true;
+                }
+
+                player->add_combat_report(combat_report);
+                UtilityFunctions::print("Damage done to player");
+                }
             }
         }
         
