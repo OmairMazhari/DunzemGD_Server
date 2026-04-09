@@ -17,7 +17,7 @@ PlayerWeaponManager::~PlayerWeaponManager() {
 
 void PlayerWeaponManager::Update(double delta, Dictionary input) {
     GAME_ONLY
-
+   
     this->input = input;
     Dictionary event_input = input["event_based_actions"];
     
@@ -29,7 +29,7 @@ void PlayerWeaponManager::Update(double delta, Dictionary input) {
     } if(event_input["melee"]){
         change_state(Ref<WeaponResource>(Object::cast_to<WeaponResource>(states[Melee])));
     }
-
+  
     // Cast current_weapon
     Ref<WeaponResource> current_weapon = current_state;
 
@@ -39,11 +39,14 @@ void PlayerWeaponManager::Update(double delta, Dictionary input) {
         UtilityFunctions::print("ERROR::WEAPON_NULL");
         return;
     }
+   
     // Update current_state
     ResourceFSM::Update(delta);
+  
    
     // Sway current weapon
     sway_and_update(current_weapon->get_view_model_instance(), delta);
+  
 }
 
 void PlayerWeaponManager::_process(double delta) {

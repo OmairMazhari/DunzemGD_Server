@@ -32,6 +32,8 @@
 #include "Player/Weapon/GunWeaponResource.h"
 #include "FSM/ResourceFSM/FSM.h"
 
+#include "Server/Server.h"
+
 
 
 using namespace godot;
@@ -41,6 +43,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+
+	GDREGISTER_RUNTIME_CLASS(Server);
+
 	GDREGISTER_RUNTIME_CLASS(FPSController);
 	GDREGISTER_RUNTIME_CLASS(FSM);
 	GDREGISTER_RUNTIME_CLASS(State);

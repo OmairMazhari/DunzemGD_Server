@@ -26952,10 +26952,10 @@ transform = Transform3D(1, 4.8459015e-11, 3.3518672e-12, 6.252776e-13, 5.9604627
 shape = SubResource("CapsuleShape3D_u5h0x")
 
 [node name="Physical Bone mixamorig_Head" type="PhysicalBone3D" parent="ProtoBot/Y Bot/Skeleton3D/PhysicalBoneSimulator3D" groups=["Head"]]
-transform = Transform3D(0.030134095, 2.053756e-09, 1.3322676e-15, -2.6364126e-09, 0.038683224, 1.09065196e-13, -2.220446e-15, -1.090652e-13, 0.038683224, -6.4470614e-06, 0.0001142025, -2.3841858e-07)
+transform = Transform3D(0.030134095, 2.053756e-09, 1.3322676e-15, -2.6364126e-09, 0.038683224, 1.09065196e-13, -2.220446e-15, -1.090652e-13, 0.038683224, -7.629625e-06, 0.0001142025, -2.3841858e-07)
 joint_type = 1
-joint_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0012564847, 41.37813, -0.08808167)
-body_offset = Transform3D(0.030134095, 3.377802e-06, 8.015585e-09, -2.632332e-06, 0.038683224, -1.0453607e-09, -6.244192e-09, 1.0439613e-09, 0.038683224, -0.00010190342, -1.6006396, 0.00340724)
+joint_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0012172413, 41.37813, -0.08808167)
+body_offset = Transform3D(0.030134095, 3.377802e-06, 8.015585e-09, -2.632332e-06, 0.038683224, -1.0453607e-09, -6.244192e-09, 1.0439613e-09, 0.038683224, -0.000103085986, -1.6006396, 0.00340724)
 bone_name = "mixamorig_Head"
 joint_constraints/bias = 0.3
 joint_constraints/damping = 1.0

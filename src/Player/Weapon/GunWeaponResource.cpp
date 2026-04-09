@@ -32,6 +32,7 @@ void GunWeaponResource::Enter() {
 }
 
 void GunWeaponResource::Update(double delta) {
+    UtilityFunctions::print("reached A");
     WeaponResource::Update(delta);
     
     Dictionary event_input = input["event_based_actions"];
@@ -46,6 +47,7 @@ void GunWeaponResource::Update(double delta) {
         reload_label->set_text(String((std::to_string(current_ammo) + "/" + std::to_string(magazine_capacity) + " Total Ammo: " + std::to_string(reserve_ammo)).c_str()));
        
     }
+    UtilityFunctions::print("reached B");
     // Handle primary fire
     if(is_semi_auto){
         if(event_input["left_click"]) {
@@ -67,11 +69,12 @@ void GunWeaponResource::Update(double delta) {
         }
     }
 
+    UtilityFunctions::print("reached C");
     // Handle reload
     if (event_input["reload"] ) {
         reload_pressed();
     }
-   
+   UtilityFunctions::print("reached D");
 
 }
 
@@ -96,11 +99,16 @@ void GunWeaponResource::trigger_up() {
 
 
 void GunWeaponResource::shoot() {
+    UtilityFunctions::print("ha");
     play_anim(shoot_anim_name);
     play_audio(shoot_audio);
+   
+
 
     // Handle bulelt collision
     if (bullet_ray_cast->is_colliding()){
+
+         UtilityFunctions::print("mi");
         Object* obj = bullet_ray_cast->get_collider();
         Vector3 normal = bullet_ray_cast->get_collision_normal();
         Vector3 point = bullet_ray_cast->get_collision_point();
@@ -108,10 +116,15 @@ void GunWeaponResource::shoot() {
         if(rigidBody) {
             rigidBody->apply_impulse(-normal * 50.0f / rigidBody->get_mass(), point - rigidBody->get_global_position());
         }
+
         Area3D* area= Object::cast_to<Area3D>(obj);
-        FPSController* enemy_player = Object::cast_to<FPSController>(area->get_parent()->get_parent()->get_parent()->get_parent()->get_parent()->get_parent()->get_parent());
+
+
         if(area){
+            FPSController* enemy_player = Object::cast_to<FPSController>(area->get_parent()->get_parent()->get_parent()->get_parent()->get_parent()->get_parent()->get_parent());
+
             if(enemy_player) {
+                 UtilityFunctions::print("mi");
                 if(enemy_player != player){
                 // Tell gun owner they got a hit 
                 player->set_hit(true);
@@ -142,12 +155,15 @@ void GunWeaponResource::shoot() {
                 player->add_combat_report(combat_report);
                 UtilityFunctions::print("Damage done to player");
                 }
+                 UtilityFunctions::print("mi");
+                
             }
         }
         
     }
     last_fire_time = Time::get_singleton()->get_ticks_msec();
     current_ammo -= 1;
+    UtilityFunctions::print("mi");
 }
 
 int GunWeaponResource::get_amount_can_reload() {

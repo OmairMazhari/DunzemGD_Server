@@ -49,6 +49,10 @@ void FPSController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_kills"), &FPSController::get_kills);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "kills"), "set_kills", "get_kills");
 
+    // Died
+    ClassDB::add_signal("FPSController", MethodInfo("died"));
+
+
 
 }
 
@@ -103,6 +107,7 @@ bool FPSController::take_damage(int damage) {
     if (curr_health <= 0){
         curr_health = 0;
         on_dead();
+        emit_signal("died");
         return true;
     }
     return false;

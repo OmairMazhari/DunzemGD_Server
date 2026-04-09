@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Server="*res://Server.gd"
-Client="*res://Client.gd"
+Server="res://Server.gd"
+GlobalServer="*res://server.tscn"
 
 [display]
 
@@ -113,6 +113,7 @@ common/physics_ticks_per_second=30
 common/max_physics_steps_per_frame=100
 common/physics_jitter_fix=0.0
 3d/physics_engine="Jolt Physics"
+common/physics_interpolation=true
 
 [rendering]
 
