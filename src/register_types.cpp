@@ -32,7 +32,7 @@
 #include "Player/Weapon/GunWeaponResource.h"
 #include "FSM/ResourceFSM/FSM.h"
 
-#include "Server/Server.h"
+#include "Network/Server.h"
 
 
 

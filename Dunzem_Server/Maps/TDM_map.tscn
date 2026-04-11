@@ -1,4 +1,4 @@
-[gd_scene load_steps=1088 format=4 uid="uid://b1hytnu5uiwd5"]
+[gd_scene load_steps=1089 format=4 uid="uid://b1hytnu5uiwd5"]
 
 [ext_resource type="AnimationLibrary" uid="uid://db748qetll8oy" path="res://FPSController/animations/death from the back.fbx" id="2_bqcfp"]
 [ext_resource type="Script" path="res://fps.gd" id="2_wwou8"]
@@ -20,6 +20,7 @@
 [ext_resource type="AnimationLibrary" uid="uid://btyx75on3re6f" path="res://FPSController/animations/sprint right.fbx" id="17_rc480"]
 [ext_resource type="AnimationLibrary" uid="uid://daoqr3hqapshu" path="res://FPSController/animations/turn 90 left.fbx" id="18_5tm1p"]
 [ext_resource type="AnimationLibrary" uid="uid://fe5gj0ctm6aq" path="res://FPSController/animations/turn 90 right.fbx" id="19_bwae2"]
+[ext_resource type="PackedScene" uid="uid://dqu0j5ab0ejex" path="res://FPSController/FPSController.tscn" id="21_pxl03"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_b5a3a"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -27415,3 +27416,6 @@ material_overlay = SubResource("ShaderMaterial_b5a3a")
 mesh = SubResource("ArrayMesh_hg65l")
 skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_wwou8")
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("21_pxl03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.90498, -25.742704)
