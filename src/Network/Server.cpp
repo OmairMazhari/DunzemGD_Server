@@ -65,11 +65,11 @@ void Server::process_raw_packet(int sender_id, const PackedByteArray &data) {
     PlayerNetworkData packet = deserialize_player_data(data);
     
     // Security check: ensure packet claims to be from the actual sender
-    if (packet.player_id != sender_id) {
-        UtilityFunctions::print("[SECURITY] Player ", sender_id, 
-                               " tried to impersonate player ", packet.player_id);
-        return;
-    }
+    // if (packet.player_id != sender_id) {
+    //     UtilityFunctions::print("[SECURITY] Player ", sender_id, 
+    //                            " tried to impersonate player ", packet.player_id);
+    //     return;
+    // }
     
     // Update or create player info
     if (!players.has(sender_id)) {
@@ -125,11 +125,11 @@ void Server::broadcast_player_states() {
         for (const KeyValue<int, PlayerInfo>& other : players) {
             int other_player_id = other.key;
             
-            // Skip sending the client their own data
-            if (other_player_id == target_client_id) {
-                UtilityFunctions::print("       ├─ (SKIP) Own data for player ", other_player_id);
-                continue;
-            }
+            // // Skip sending the client their own data
+            // if (other_player_id == target_client_id) {
+            //     UtilityFunctions::print("       ├─ (SKIP) Own data for player ", other_player_id);
+            //     continue;
+            // }
             
             UtilityFunctions::print("       ├─ Sending player ", other_player_id, 
                                    " at (", other.value.position.x, ", ", 
@@ -150,7 +150,7 @@ void Server::send_player_state_to_client(int target_client_id, int player_id) {
     packet.packet_type = TYPE_PLAYER_STATE;
     packet.player_id = player_id;
     packet.input_flags = info.input_flags;
-    packet.pos_x = info.position.x;
+    packet.pos_x = info.position.x + 1;
     packet.pos_y = info.position.y;
     packet.pos_z = info.position.z;
     packet.mouse_offset_x = (int16_t)info.mouse_offset.x;
