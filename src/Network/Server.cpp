@@ -77,11 +77,15 @@ void Server::process_raw_packet(int sender_id, const PackedByteArray &data) {
         players[sender_id].peer_id = sender_id;
     }
     
-    PlayerInfo& info = players[sender_id];
-    info.position = Vector3(packet.pos_x, packet.pos_y, packet.pos_z);
+    PlayerNetworkData& info = players[sender_id].latest_packet;
+    info.pos_x = packet.pos_x;
+    info.pos_y = packet.pos_y;
+    info.pos_z = packet.pos_z;
     info.input_flags = packet.input_flags;
-    info.mouse_offset = Vector2(packet.mouse_offset_x, packet.mouse_offset_y);
-    info.last_update_time = Time::get_singleton()->get_ticks_msec() / 1000.0f;
+    info.mouse_offset_x = packet.mouse_offset_x;
+    info.mouse_offset_y = packet.mouse_offset_y;
+    info.player_id = sender_id;
+    players[sender_id].last_update_time = Time::get_singleton()->get_ticks_msec() / 1000.0f;
     
     // ========== PRINT ALL INCOMING DATA EVERY FRAME ==========
     UtilityFunctions::print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
@@ -121,42 +125,57 @@ void Server::broadcast_player_states() {
         
         UtilityFunctions::print("  └─ Sending to Client ", target_client_id, ":");
         
-        // Send ALL other players' data to this client
+        PackagedPlayerInfo info;
+
         for (const KeyValue<int, PlayerInfo>& other : players) {
             int other_player_id = other.key;
-            
-            // // Skip sending the client their own data
-            // if (other_player_id == target_client_id) {
-            //     UtilityFunctions::print("       ├─ (SKIP) Own data for player ", other_player_id);
-            //     continue;
-            // }
-            
-            UtilityFunctions::print("       ├─ Sending player ", other_player_id, 
-                                   " at (", other.value.position.x, ", ", 
-                                   other.value.position.y, ", ", other.value.position.z, ")");
-            
-            send_player_state_to_client(target_client_id, other_player_id);
+            //  Don't store your own data
+            if (other_player_id == target_client_id) {
+                continue;
+            }
+            info.player_packet.push_back(players[other_player_id].latest_packet);
         }
+
+        PackedByteArray bytes = serialize_packaged_player_info(info);
+    
+        // Get the peer for the specific client and send directly
+        Ref<WebSocketPeer> client_peer = peer->get_peer(target_client_id);
+        if (client_peer.is_valid()) {
+            client_peer->put_packet(bytes);
+        }
+
+        // // Send ALL other players' data to this client
+        // for (const KeyValue<int, PlayerInfo>& other : players) {
+        //     int other_player_id = other.key;
+            
+        //     // // Skip sending the client their own data
+        //     // if (other_player_id == target_client_id) {
+        //     //     UtilityFunctions::print("       ├─ (SKIP) Own data for player ", other_player_id);
+        //     //     continue;
+        //     // }
+            
+        //     UtilityFunctions::print("       ├─ Sending player ", other_player_id, 
+        //                            " at (", other.value.latest_packet.pos_x, ", ", 
+        //                            other.value.latest_packet.pos_y, ", ", other.value.latest_packet.pos_z, ")");
+            
+        //     send_player_state_to_client(target_client_id, other_player_id);
+        // }
         UtilityFunctions::print("       └─ Done");
     }
 }
 
+void Server::send_packaged_player_info_to_client(int target_client_id) {
+    
+
+    
+
+};
 void Server::send_player_state_to_client(int target_client_id, int player_id) {
     if (!players.has(player_id)) return;
     
     PlayerInfo& info = players[player_id];
-    
-    PlayerNetworkData packet;
-    packet.packet_type = TYPE_PLAYER_STATE;
-    packet.player_id = player_id;
-    packet.input_flags = info.input_flags;
-    packet.pos_x = info.position.x + 1;
-    packet.pos_y = info.position.y;
-    packet.pos_z = info.position.z;
-    packet.mouse_offset_x = (int16_t)info.mouse_offset.x;
-    packet.mouse_offset_y = (int16_t)info.mouse_offset.y;
-    
-    PackedByteArray bytes = serialize_player_data(packet);
+ 
+    PackedByteArray bytes = serialize_player_data(info.latest_packet);
     
     // Get the peer for the specific client and send directly
     Ref<WebSocketPeer> client_peer = peer->get_peer(target_client_id);
@@ -173,11 +192,15 @@ void Server::_on_peer_connected(int id) {
     // Initialize player info
     PlayerInfo new_player;
     new_player.peer_id = id;
-    new_player.position = Vector3(0, 0, 0);
-    new_player.input_flags = 0;
-    new_player.mouse_offset = Vector2(0, 0);
-    new_player.last_update_time = Time::get_singleton()->get_ticks_msec() / 1000.0f;
+    new_player.latest_packet.pos_x= 0.0f;
+    new_player.latest_packet.pos_y = 0.0f;
+    new_player.latest_packet.pos_z = 0.0f;
+    new_player.latest_packet.input_flags = 0;
+    new_player.latest_packet.mouse_offset_x = 0;
+    new_player.latest_packet.mouse_offset_y = 0;
+
     players[id] = new_player;
+    players[id].last_update_time = Time::get_singleton()->get_ticks_msec() / 1000.0f;
     
     // Print current player list
     UtilityFunctions::print("Active players (", players.size(), " total):");
