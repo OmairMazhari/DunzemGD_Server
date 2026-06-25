@@ -86,7 +86,6 @@ States = Array[ResourceState]([SubResource("GunWeaponResource_1l80g")])
 volume_db = -50.732
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -97,7 +96,7 @@ grow_vertical = 2
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1980, 1080)
-render_target_update_mode = 0
+render_target_update_mode = 4
 
 [node name="ViewCamera" parent="SubViewportContainer/SubViewport" instance=ExtResource("5_48f3b")]
 look_sway_factor = 0.11

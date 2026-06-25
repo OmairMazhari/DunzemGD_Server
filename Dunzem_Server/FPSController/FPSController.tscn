@@ -8,7 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://cxg235d340pok" path="res://audio/cc0-369781__morganpurkis__silenced-gunshot.wav" id="6_24kai"]
 [ext_resource type="PackedScene" uid="uid://d085oxxc1fubn" path="res://reload_ui.tscn" id="6_fg75b"]
 [ext_resource type="PackedScene" uid="uid://6bgb1wwj1r20" path="res://proto_ak.tscn" id="8_24kai"]
-[ext_resource type="PackedScene" uid="uid://dt0bgt80uvots" path="res://FPSController/protobot.tscn" id="10_4g70c"]
+[ext_resource type="PackedScene" uid="uid://e5sbxq0blrj6" path="res://FPSController/protobot.tscn" id="10_4g70c"]
 [ext_resource type="Texture2D" uid="uid://nihyddsoixq0" path="res://crosshair037.png" id="10_fg75b"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_2veyp"]
